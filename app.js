@@ -17,7 +17,14 @@ app.use((req,res,next) =>{
     next();
 })
 app.use(authenticationRoutes,clubRoutes)
-
+app.use((err,req,res,next)=>{
+    console.log("msg");
+    const msg =err.message;
+    const type =err.type;
+    const success = false
+    res.status(400).send({type:type,msg:msg,success:success})
+   // console.log(err);
+})
 mongoose.connect('mongodb+srv://khem:jkO7waXYN1JhDm3h@data.j0xa8.mongodb.net/scam?retryWrites=true&w=majority')
          .then(result =>{
              console.log('Connected !');

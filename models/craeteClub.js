@@ -29,5 +29,15 @@ const createClubSchema = new Schema({
         default:Date.now()
     }
 });
+createClubSchema.statics.isThisClub = async function(name){
+    try {
+        const club = await this.findOne({name})
+        if(club) return false;
 
+        return true;
+    } catch (error) {
+        console.log('error inside method ',error.message)
+        return false;
+    }
+}
 module.exports = mongoose.model('NewClubs',createClubSchema);

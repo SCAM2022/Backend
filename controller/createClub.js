@@ -1,7 +1,7 @@
 const Club = require('../models/craeteClub');
 
 const express = require('express');
-
+const fs = require('fs')
 const app = express();
 const authController = require('../controller/createClub');
 const multer = require('multer');
@@ -10,6 +10,7 @@ const router = express.Router();
 
 
 const path = require('path');
+const removeUploadedFiles = require('multer/lib/remove-uploaded-files');
 app.set('views',path.join(__dirname,'views'));
 app.use(express.static(`${__dirname}/public`))
 
@@ -38,12 +39,30 @@ exports.upload = multer({
 exports.createClub = async(req,res,next)=>{
     try{
         const obj = JSON.parse(JSON.stringify(req.body));
-        console.log(obj);
+        //console.log(obj);
         const name = obj.name;
         const disc = obj.disc;
         const goal = obj.goal;
         const authDoc = req.file.path;
         const authBy = obj.authBy;
+        // checking Club name already exist or not
+        const clubName = await Club.isThisClub(name);
+        if(!clubName) {
+           // removeUploadedFiles(req.file.path)
+           fs.unlink(req.file.path, (err) => {
+            if (err) {
+              console.error(err)
+              return
+            }
+          
+            //file removed
+          })
+            return res.status(400).json({
+                success:false,
+                type:'name',
+                msg:"The Club name is already exist !"
+            })
+        }
         const newClub = new Club({
             name:name,
             disc:disc,
@@ -54,7 +73,7 @@ exports.createClub = async(req,res,next)=>{
         newClub.save()
          .then(result=>{
             console.log(req.file);
-            res.send(newClub);
+            res.status(200).send(newClub);
             console.log(newClub);
         })
         .catch(err=>{
