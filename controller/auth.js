@@ -2,8 +2,9 @@ const SignUp = require('../models/auth');
 const bcrypt = require("bcryptjs");
 const {validationResult} = require('express-validator');
 const jwt = require('jsonwebtoken');
-exports.postSignUp = async(req,res,next) => {
-    //console.log(req. body);
+
+ //checking email is present or not
+ exports.postCheckEmail = async(req,res,next)=>{
     try {
         const err = validationResult(req);
     if(!err.isEmpty()){
@@ -14,45 +15,88 @@ exports.postSignUp = async(req,res,next) => {
     }
     const obj = JSON.parse(JSON.stringify(req.body));
     console.log(obj);
-    const name = obj.name;
-    const rollno = obj.roll;
-    const dept = obj.dept;
-    const enroll = obj.enroll;
-    const passout = obj.passout;
-    const email = obj.Auth;
-    const password = obj.Password;
-    const securePassword= await bcrypt.hash(password,10);
-    //checking email is present or not
+    const email = obj.email;
     const newUser = await SignUp.isThisEmail(email);
-    if(!newUser) return res.status(400).json({
+    if(!newUser)  res.status(400).json({
         success:false,
         type:'email',
         msg:"This email is already taken !"
     })
+    else{
+        res.status(200).json({
+            success:true,
+             type:'email',
+            msg:"This email is unique!"
+        })
+    }
+    
+ }
+ catch (error) {
+    next(error);
+}
+}
 
+// checking rollNumber and enrollmentNumber is already present or not
 
-     //checking Roll number is present or not
-     const newRoll = await SignUp.isThisRoll(rollno);
-     if(!newRoll) return res.status(400).json({
-         success:false,
-         type:'roll',
-         msg:"This Roll number  is already present !"
-     })
-
-      //checking Enroll number is present or not
-    const newEnroll = await SignUp.isThisEnroll(enroll);
-    if(!newEnroll) return res.status(400).json({
+exports.postCheckRoll = async(req,res,next)=>{
+    const obj = JSON.parse(JSON.stringify(req.body));
+    console.log(obj);
+    const enroll = obj.enrollmentNo;
+    const rollno = obj.rollNumber;
+ 
+    const newRoll = await SignUp.isThisRoll(rollno);
+    if(!newRoll) return res.status(400).json({
         success:false,
-        type:'enroll',
-        msg:"This Enrollment number  is already prensent"
+        type:'roll',
+        msg:"This Roll Number is already taken !"
     })
+
+     //checking Enroll number is present or not
+   const newEnroll = await SignUp.isThisEnroll(enroll);
+   if(!newEnroll) return res.status(400).json({
+       success:false,
+       type:'enroll',
+       msg:"This Enrollment number  is already prensent"
+   })
+    else{
+        res.status(200).json({
+            success:true,
+             type:'rollNumber and Enrollment',
+            msg:"This Roll number and Enrollment Number is unique"
+        })
+    }
+    
+}
+
+exports.postSignUp = async(req,res,next) => {
+    //console.log(req. body);
+  
+    const obj = JSON.parse(JSON.stringify(req.body));
+    console.log(obj);
+    const name = obj.person;
+    const rollno = obj.rollNumber;
+    const phone = obj.phone
+    const dept = obj.department;
+    const enroll = obj.enrollmentNo;
+    const admissionYear = obj.admissionYear;
+    const year = obj.year;
+    const semester = obj.semester;
+    const email = obj.email;
+    const password = obj.password;
+    const securePassword= await bcrypt.hash(password,10);
+    
+
+
     const user = new SignUp({
         name: name,
         email: email,
         department: dept,
         rollno: rollno,
         enroll: enroll,
-        passout: passout,
+        admissionYear:admissionYear,
+        semester:semester,
+        year:year,
+        phone:phone,
         password: securePassword
     })
     user.save()
@@ -67,9 +111,6 @@ exports.postSignUp = async(req,res,next) => {
         .catch(err =>{
             console.log(err);
         })
-    } catch (error) {
-        next(error);
-    }
 }
 
 exports.getSignUp = (req,res,next) =>{

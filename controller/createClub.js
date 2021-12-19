@@ -36,6 +36,29 @@ exports.upload = multer({
     storage:fileStorage,
     fileFilter:multerFilter
 });
+exports.checkClub = async(req,res,next)=>{
+    try{
+        const obj = JSON.parse(JSON.stringify(req.body));
+        //console.log(obj);
+        const name = obj.name;
+        const clubName = await Club.isThisClub(name);
+        if(!clubName) {
+            return res.status(400).json({
+                success:false,
+                type:'name',
+                msg:"The Club name is already exist !"
+            })
+        }
+        res.status(200).json({
+            success:true,
+            type:'name',
+            msg:"The Club name is unique!"
+        })
+    }
+    catch(e){
+        res.status(400).send(e);
+       }
+}
 exports.createClub = async(req,res,next)=>{
     try{
         const obj = JSON.parse(JSON.stringify(req.body));
@@ -46,23 +69,23 @@ exports.createClub = async(req,res,next)=>{
         const authDoc = req.file.path;
         const authBy = obj.authBy;
         // checking Club name already exist or not
-        const clubName = await Club.isThisClub(name);
-        if(!clubName) {
-           // removeUploadedFiles(req.file.path)
-           fs.unlink(req.file.path, (err) => {
-            if (err) {
-              console.error(err)
-              return
-            }
+        // const clubName = await Club.isThisClub(name);
+        // if(!clubName) {
+        //    // removeUploadedFiles(req.file.path)
+        //    fs.unlink(req.file.path, (err) => {
+        //     if (err) {
+        //       console.error(err)
+        //       return
+        //     }
           
-            //file removed
-          })
-            return res.status(400).json({
-                success:false,
-                type:'name',
-                msg:"The Club name is already exist !"
-            })
-        }
+        //     //file removed
+        //   })
+        //     return res.status(400).json({
+        //         success:false,
+        //         type:'name',
+        //         msg:"The Club name is already exist !"
+        //     })
+        // }
         const newClub = new Club({
             name:name,
             disc:disc,

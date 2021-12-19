@@ -12,23 +12,33 @@ const signUpSchema = new Schema({
         required: true,
         unique: true,
     },
+    phone:{
+        type:Number,
+        required:true
+    },
     department:{
         type: String,
         required: true,
     },
     rollno:{
       type: Number,
-      required: true,
       unique: true
     },
     enroll:{
         type: String,
-        required: true,
         unique: true
     },
-    passout:{
+    year:{
+       type:Number,
+       required:true,
+    },
+    admissionYear:{
         type: Number,
         required: true
+    },
+    semester:{
+        type:Number,
+        required:true
     },
     password:{
         type: String,

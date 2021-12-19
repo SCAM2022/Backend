@@ -7,9 +7,11 @@ const router = express.Router();
 const Auth = require('../token/token')
 router.get('/',authController.getSignUp);
 router.get('/login',Auth,authController.getSignIn);
-router.post('/authenticate',[
-    body('Auth')
-.isEmail().withMessage("Invalid !").normalizeEmail()],authController.postSignUp);
+router.post('/checkEmail',[
+    body('email')
+.isEmail().withMessage("Invalid !").normalizeEmail()],authController.postCheckEmail);
+router.post('/checkRoll',authController.postCheckRoll);
+router.post('/authenticate',authController.postSignUp);
 router.post('/login',authController.postSignIn);
 router.get('/user',Auth,authController.getUser);
 // upload Docs to the local host
