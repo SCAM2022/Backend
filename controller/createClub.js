@@ -1,5 +1,6 @@
-const Club = require('../models/craeteClub');
-
+const {Club} = require('../models/craeteClub');
+const {list} = require('../models/craeteClub');
+const User = require('../models/auth')
 const express = require('express');
 const fs = require('fs')
 const app = express();
@@ -68,6 +69,7 @@ exports.createClub = async(req,res,next)=>{
         const goal = obj.goal;
         const authDoc = req.file.path;
         const authBy = obj.authBy;
+        const preName = obj.preName
         // checking Club name already exist or not
         // const clubName = await Club.isThisClub(name);
         // if(!clubName) {
@@ -93,10 +95,24 @@ exports.createClub = async(req,res,next)=>{
             authDocs:authDoc,
             authorizedBy:authBy,
         })
+        const newList = new list({
+            clubName: name,
+            info: [
+                {
+                    name: preName,
+                    Role: obj.Role,
+                    joinedOn: obj.date
+                }
+            ]
+        })
         newClub.save()
          .then(result=>{
             console.log(req.file);
-            res.status(200).send(newClub);
+            newList.save()
+                   .then(rslt =>{
+                       console.log(rslt)
+                       res.status(200).send(newClub);
+                   })
             console.log(newClub);
         })
         .catch(err=>{
@@ -107,5 +123,28 @@ exports.createClub = async(req,res,next)=>{
     catch(e){
         res.status(400).send(e);
        }
+}
+exports.joinClub = async(req,res,next) =>{
+    const obj = JSON.parse(JSON.stringify(req.body));
+    const clubName = obj.clubName;
+    const name = obj.name;
+    const Role = obj.Role;
+    const joinedOn = obj.joinedOn;
+    list.findOne({clubName})
+        .then(list =>{
+            const l = list.info;
+            l.push(
+                {
+                    name: name,
+                    Role: Role,
+                    joinedOn: joinedOn
+                })
+            list.info = l;
+            list.save()
+                .then(rslt =>{
+                    console.log(l);
+            res.send('OK');
+                })
+        })
 }
 //module.exports=upload;

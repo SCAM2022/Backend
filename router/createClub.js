@@ -6,4 +6,5 @@ const Auth = require('../token/token')
 // upload Docs to the local host
 router.post('/checkClub',authController.checkClub);
 router.post('/createclub',Auth,authController.upload.single("docs"),authController.createClub)
+router.post('/joinclub',Auth,authController.joinClub)
 module.exports = router;
