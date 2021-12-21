@@ -5,6 +5,7 @@ const app = express();
 const mongoose = require('mongoose');
 const authenticationRoutes = require('./router/auth');
 const clubRoutes = require('./router/createClub');
+const eventRoutes = require('./router/createEvent');
 app.use(express.json());
 const bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({extended: false}));
@@ -16,7 +17,7 @@ app.use((req,res,next) =>{
     res.setHeader('Access-Control-Allow-Headers','Content-Type,Authorization');
     next();
 })
-app.use(authenticationRoutes,clubRoutes)
+app.use(authenticationRoutes,clubRoutes,eventRoutes)
 app.use((err,req,res,next)=>{
     console.log("msg");
     const msg =err.message;

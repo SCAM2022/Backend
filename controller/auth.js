@@ -75,7 +75,7 @@ exports.postSignUp = async(req,res,next) => {
     console.log(obj);
     const name = obj.person;
     const rollno = obj.rollNumber;
-    const phone = obj.phone
+    const phone = obj.phone;
     const dept = obj.department;
     const enroll = obj.enrollmentNo;
     const admissionYear = obj.admissionYear;

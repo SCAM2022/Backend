@@ -14,6 +14,5 @@ router.post('/checkRoll',authController.postCheckRoll);
 router.post('/authenticate',authController.postSignUp);
 router.post('/login',authController.postSignIn);
 router.get('/user',Auth,authController.getUser);
-// upload Docs to the local host
-//router.post('/createclub',club.upload.single("docs"),club.createClub)
+
 module.exports = router;
