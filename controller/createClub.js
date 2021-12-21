@@ -124,6 +124,14 @@ exports.createClub = async(req,res,next)=>{
         res.status(400).send(e);
        }
 }
+exports.findClub = async(req,res,next)=>{
+    const clubs = await Club.find();
+    if(clubs){
+        res.status(200).send(clubs)
+    }else{
+        res.status(400).json({msg:"Couldn't find club !"})
+    }
+}
 exports.joinClub = async(req,res,next) =>{
     const obj = JSON.parse(JSON.stringify(req.body));
     const clubName = obj.clubName;
