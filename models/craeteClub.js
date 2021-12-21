@@ -40,4 +40,27 @@ createClubSchema.statics.isThisClub = async function(name){
         return false;
     }
 }
-module.exports = mongoose.model('NewClubs',createClubSchema);
+const Club = mongoose.model('Club',createClubSchema);
+
+const memberList = new Schema({
+    clubName:{
+        type: String,
+    },
+    info: [{
+        name:{
+            type: String,
+          required: true,
+        },
+        Role:{
+            type: String,
+        },
+        joinedOn:{
+            type: String
+        }
+    }]
+});
+const list = mongoose.model('list',memberList);
+module.exports = {
+    Club: Club,
+    list: list
+}
