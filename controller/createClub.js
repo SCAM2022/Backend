@@ -155,4 +155,15 @@ exports.joinClub = async(req,res,next) =>{
                 })
         })
 }
+exports.getMemberList = async(req,res,next)=>{
+
+    const obj = JSON.parse(JSON.stringify(req.body));
+    const clubName = obj.clubName;
+    const members = await list.find({clubName:clubName}) 
+    if(members){
+        res.status(200).send(members);
+    }else{
+        res.status(400).json({msg:"Couldn't find club !"})
+    }
+}
 //module.exports=upload;

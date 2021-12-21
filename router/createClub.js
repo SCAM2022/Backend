@@ -8,4 +8,5 @@ router.post('/checkClub',authController.checkClub);
 router.post('/createclub',Auth,authController.upload.single("docs"),authController.createClub)
 router.post('/joinclub',Auth,authController.joinClub)
 router.get('/findClub',authController.findClub)
+router.post('/memberList',authController.getMemberList)
 module.exports = router;
