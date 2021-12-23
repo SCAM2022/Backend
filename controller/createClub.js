@@ -107,14 +107,18 @@ exports.createClub = async(req,res,next)=>{
         })
         newClub.save()
          .then(result=>{
-            console.log(req.file);
-            console.log(newClub);
+            newList.save()
+            .then(rslt =>{
+                    //  console.log(rslt)
+                    //  console.log(req.file);
+                    //  console.log(newClub);
+                     res.status(200).send(newClub);
+           })
+           .catch(err =>{
+            res.status(400).json({msg:"Couldn't created club !!"})
+            console.log(err);
+           })
         })
-        newList.save()
-              .then(rslt =>{
-                       console.log(rslt)
-                       res.status(200).send(newClub);
-             })
         .catch(err=>{
             res.status(400).json({msg:"Couldn't created club !!"})
             console.log(err);
