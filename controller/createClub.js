@@ -1,5 +1,5 @@
-const {Club} = require('../models/craeteClub');
-const {list} = require('../models/craeteClub');
+const Club = require('../models/craeteClub');
+const list = require('../models/Memberlist');
 const User = require('../models/auth')
 const express = require('express');
 const fs = require('fs')
@@ -99,7 +99,7 @@ exports.createClub = async(req,res,next)=>{
             clubName: name,
             info: [
                 {
-                    name: preName,
+                    prename: preName,
                     Role: obj.Role,
                     joinedOn: obj.date
                 }
@@ -107,13 +107,17 @@ exports.createClub = async(req,res,next)=>{
         })
         newClub.save()
          .then(result=>{
-            console.log(req.file);
             newList.save()
-                   .then(rslt =>{
-                       console.log(rslt)
-                       res.status(200).send(newClub);
-                   })
-            console.log(newClub);
+            .then(rslt =>{
+                    //  console.log(rslt)
+                    //  console.log(req.file);
+                    //  console.log(newClub);
+                     res.status(200).send(newClub);
+           })
+           .catch(err =>{
+            res.status(400).json({msg:"Couldn't created club !!"})
+            console.log(err);
+           })
         })
         .catch(err=>{
             res.status(400).json({msg:"Couldn't created club !!"})
@@ -143,7 +147,7 @@ exports.joinClub = async(req,res,next) =>{
             const l = list.info;
             l.push(
                 {
-                    name: name,
+                    prename: name,
                     Role: Role,
                     joinedOn: joinedOn
                 })
