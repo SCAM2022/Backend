@@ -20,6 +20,9 @@ const createClubSchema = new Schema({
       type: String,
       required: true,
     },
+    clubImage:{
+        type: String,
+      },
     authorizedBy:{
         type: String,
         required: true,

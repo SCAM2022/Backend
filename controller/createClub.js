@@ -1,5 +1,6 @@
 const Club = require('../models/craeteClub');
 const list = require('../models/Memberlist');
+const achievements = require('../models/clubAchievements');
 const User = require('../models/auth')
 const express = require('express');
 const fs = require('fs')
@@ -18,7 +19,7 @@ app.use(express.static(`${__dirname}/public`))
 
 const fileStorage = multer.diskStorage({
     destination:(req,file,cb)=>{
-        cb(null,'./public');
+        cb(null,'./public/club');
     },
     filename:(req,file,cb)=>{
         const ext = file.mimetype.split("/")[1];
@@ -35,7 +36,7 @@ const multerFilter = (req,file,cb)=>{
 }
 exports.upload = multer({
     storage:fileStorage,
-    fileFilter:multerFilter
+    // fileFilter:multerFilter
 });
 exports.checkClub = async(req,res,next)=>{
     try{
@@ -62,12 +63,14 @@ exports.checkClub = async(req,res,next)=>{
 }
 exports.createClub = async(req,res,next)=>{
     try{
+        console.log(req.files)
         const obj = JSON.parse(JSON.stringify(req.body));
         //console.log(obj);
         const name = obj.name;
         const disc = obj.disc;
         const goal = obj.goal;
-        const authDoc = req.file.path;
+        const authDoc = req.files[0].path;
+        const clubImage = req.files[1].path;
         const authBy = obj.authBy;
         const preName = obj.preName
         // checking Club name already exist or not
@@ -94,6 +97,7 @@ exports.createClub = async(req,res,next)=>{
             goal:goal,
             authDocs:authDoc,
             authorizedBy:authBy,
+            clubImage:clubImage
         })
         const newList = new list({
             clubName: name,
@@ -159,6 +163,16 @@ exports.joinClub = async(req,res,next) =>{
                 })
         })
 }
+exports.postSingleClub = async(req,res,next)=>{
+    const obj = JSON.parse(JSON.stringify(req.body));
+    const clubName = obj.clubName;
+    const club = await Club.findOne({name:clubName}) 
+    if(club){
+        res.status(200).send(club);
+    }else{
+        res.status(400).json({msg:"Couldn't find club !"})
+    }
+}
 exports.getMemberList = async(req,res,next)=>{
 
     const obj = JSON.parse(JSON.stringify(req.body));
@@ -170,4 +184,5 @@ exports.getMemberList = async(req,res,next)=>{
         res.status(400).json({msg:"Couldn't find club !"})
     }
 }
+
 //module.exports=upload;
