@@ -113,6 +113,49 @@ exports.postSignUp = async(req,res,next) => {
         })
 }
 
+exports.updateProfile = async(req,res,next) => {
+    //console.log(req. body);
+  
+    const obj = JSON.parse(JSON.stringify(req.body));
+    console.log(obj);
+    const name = obj.person;
+    const rollno = obj.rollNumber;
+    const phone = obj.phone;
+    const dept = obj.department;
+    const enroll = obj.enrollmentNo;
+    const admissionYear = obj.admissionYear;
+    const year = obj.year;
+    const semester = obj.semester;
+    const email = obj.email;
+    const password = obj.password;
+    const id = obj.id;
+    const securePassword= await bcrypt.hash(password,10);
+    
+
+
+    const user = await SignUp.findByIdAndUpdate(id,{
+        name: name,
+        email: email,
+        department: dept,
+        rollno: rollno,
+        enroll: enroll,
+        admissionYear:admissionYear,
+        semester:semester,
+        year:year,
+        phone:phone,
+        password: securePassword
+    })
+    if(user){
+        console.log('Updated !');
+        res.status(200).json({
+            success:true,
+            msg:"User Details Updated Successfully !"
+        }).redirect('/');
+    }else{
+        res.status(400).send("User details couldn't update..");
+    }
+}
+
 exports.getSignUp = (req,res,next) =>{
     res.send(
         '<form action="/authenticate"method="POST"><input type="text" name="name" placeholder="Name"><br/><input type="email" name="Auth" placeholder="email"><br/><input type="text" name="roll" placeholder="RollNo"><br/><input type="text" name="dept" placeholder="department"><br/><input type="text" name="enroll" placeholder="enrollment"><br/><input type="text" name="passout" placeholder="passout"><br/><input type="password" name="Password"><br/><button type="submit">submit</submit> </form>')

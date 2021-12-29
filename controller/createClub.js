@@ -12,6 +12,8 @@ const router = express.Router();
 
 
 const path = require('path');
+// const base = path.join(__dirname,'..')
+// console.log(base)
 const removeUploadedFiles = require('multer/lib/remove-uploaded-files');
 app.set('views',path.join(__dirname,'views'));
 app.use(express.static(`${__dirname}/public`))
@@ -69,10 +71,20 @@ exports.createClub = async(req,res,next)=>{
         const name = obj.name;
         const disc = obj.disc;
         const goal = obj.goal;
-        const authDoc = req.files[0].path;
-        const clubImage = req.files[1].path;
         const authBy = obj.authBy;
-        const preName = obj.preName
+        const preName = obj.preName;
+        const id = obj.id;
+        // const authDoc = req.files[0].path;
+        // const clubImage = req.files[1].path;
+        if(req.files.length>1){
+            // console.log("size....")
+            var authDoc = req.files[0].path;
+            var clubImage = req.files[1].path;
+        }
+     else{
+        // console.log("size....")
+        var authDoc = req.files[0].path;
+     }
         // checking Club name already exist or not
         // const clubName = await Club.isThisClub(name);
         // if(!clubName) {
@@ -91,21 +103,34 @@ exports.createClub = async(req,res,next)=>{
         //         msg:"The Club name is already exist !"
         //     })
         // }
-        const newClub = new Club({
+        if(req.files.length>1){
+            var newClub = new Club({
+                name:name,
+                disc:disc,
+                goal:goal,
+                authorizedBy:authBy,
+                authDocs:authDoc,
+                clubImage:clubImage
+            })
+        }
+       else{
+       var newClub = new Club({
             name:name,
             disc:disc,
             goal:goal,
-            authDocs:authDoc,
             authorizedBy:authBy,
-            clubImage:clubImage
+            authDocs:authDoc,
         })
+       }
+      
         const newList = new list({
             clubName: name,
             info: [
                 {
                     prename: preName,
                     Role: obj.Role,
-                    joinedOn: obj.date
+                    joinedOn: obj.date,
+                    memberId:id
                 }
             ]
         })
@@ -113,10 +138,10 @@ exports.createClub = async(req,res,next)=>{
          .then(result=>{
             newList.save()
             .then(rslt =>{
-                    //  console.log(rslt)
-                    //  console.log(req.file);
-                    //  console.log(newClub);
-                     res.status(200).send(newClub);
+                    const paths = newClub.authDocs.toString()
+                    const baseDir = path.join(__dirname,'..')
+                    // console.log(base)
+                     res.status(200).json({newClub,baseDir});
            })
            .catch(err =>{
             res.status(400).json({msg:"Couldn't created club !!"})
@@ -146,6 +171,7 @@ exports.joinClub = async(req,res,next) =>{
     const name = obj.name;
     const Role = obj.Role;
     const joinedOn = obj.joinedOn;
+    const id = obj.id;
     list.findOne({clubName})
         .then(list =>{
             const l = list.info;
@@ -153,7 +179,8 @@ exports.joinClub = async(req,res,next) =>{
                 {
                     prename: name,
                     Role: Role,
-                    joinedOn: joinedOn
+                    joinedOn: joinedOn,
+                    memberId:id
                 })
             list.info = l;
             list.save()

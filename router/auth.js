@@ -16,5 +16,5 @@ router.post("/checkRoll", authController.postCheckRoll);
 router.post("/authenticate", authController.postSignUp);
 router.post("/login", authController.postSignIn);
 router.post("/user", Auth, authController.getUser);
-
+router.put("/updateUser", Auth, authController.updateProfile);
 module.exports = router;

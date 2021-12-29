@@ -16,6 +16,9 @@ const memberList = new Schema({
         },
         joinedOn:{
             type: String
+        },
+        memberId:{
+         type:String
         }
     }]
 });
