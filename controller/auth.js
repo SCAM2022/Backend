@@ -84,7 +84,6 @@ exports.postSignUp = async(req,res,next) => {
     const email = obj.email;
     const password = obj.password;
     const securePassword= await bcrypt.hash(password,10);
-    
 
 
     const user = new SignUp({
@@ -97,7 +96,7 @@ exports.postSignUp = async(req,res,next) => {
         semester:semester,
         year:year,
         phone:phone,
-        password: securePassword
+        password: securePassword,
     })
     user.save()
         .then(result =>{
@@ -130,7 +129,6 @@ exports.updateProfile = async(req,res,next) => {
     const password = obj.password;
     const id = obj.id;
     const securePassword= await bcrypt.hash(password,10);
-    
 
 
     const user = await SignUp.findByIdAndUpdate(id,{
@@ -143,7 +141,7 @@ exports.updateProfile = async(req,res,next) => {
         semester:semester,
         year:year,
         phone:phone,
-        password: securePassword
+        password: securePassword,
     })
     if(user){
         console.log('Updated !');
@@ -177,7 +175,11 @@ exports.postSignIn = async(req,res,next) => {
         });
         console.log(token);
         console.log('->',findStudent);
-        res.json({token,id:findStudent._id});
+        SignUp.findByIdAndUpdate(findStudent._id,{lastLogin:new Date()})
+        .then(r=>{
+            res.json({token,id:findStudent._id});
+
+        })
     }else{
         res.status(400).send("Login credentials invalid..");
     }

@@ -10,4 +10,6 @@ router.post('/joinclub',Auth,authController.joinClub)
 router.get('/findClub',authController.findClub)
 router.post('/club',authController.postSingleClub)
 router.post('/memberList',authController.getMemberList)
+router.post('/deleteClub',Auth,authController.postDeleteClub)
+router.post('/leftClub',Auth,authController.leftClub)
 module.exports = router;

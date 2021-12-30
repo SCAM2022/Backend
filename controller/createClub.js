@@ -172,8 +172,11 @@ exports.joinClub = async(req,res,next) =>{
     const Role = obj.Role;
     const joinedOn = obj.joinedOn;
     const id = obj.id;
+
+
     list.findOne({clubName})
         .then(list =>{
+
             const l = list.info;
             l.push(
                 {
@@ -186,9 +189,34 @@ exports.joinClub = async(req,res,next) =>{
             list.save()
                 .then(rslt =>{
                     console.log(l);
-            res.send('OK');
+             res.send('OK');
+
                 })
         })
+
+  
+}
+exports.leftClub = async(req,res,next) =>{
+    const obj = JSON.parse(JSON.stringify(req.body));
+    const clubName = obj.clubName;
+    const id = obj.id;
+     list.findOneAndDelete({clubName:clubName},{info :{$eleMatch:{memberId:id}}})
+     .then(li=>{
+         console.log(li)
+        res.status(200).json({msg:"Club left successfully !"})
+     })
+        res.status(400).json({msg:"Couldn't deleted club !"})
+    // list.findOne({clubName})
+    //     .then(list =>{
+    //         console.log(list)
+    //         const l = list.info;
+    //        list.info.findOneAndDelete({memberId:id})
+    //          .then(li=>{
+    //             res.status(200).json({msg:"Club left successfully !"})
+    //          })
+    //             res.status(400).json({msg:"Couldn't deleted club !"})
+    //     })
+  
 }
 exports.postSingleClub = async(req,res,next)=>{
     const obj = JSON.parse(JSON.stringify(req.body));
@@ -209,6 +237,17 @@ exports.getMemberList = async(req,res,next)=>{
         res.status(200).send(members);
     }else{
         res.status(400).json({msg:"Couldn't find club !"})
+    }
+}
+exports.postDeleteClub = async(req,res,next)=>{
+    const obj = JSON.parse(JSON.stringify(req.body));
+    const clubName = obj.clubName;
+    const club = await Club.findOneAndDelete({name:clubName});
+    const li = await list.findOneAndDelete({clubName});
+    if(club&&li){
+        res.status(200).json({msg:"Club deleted succesfully!"});
+    }else{
+        res.status(400).json({msg:"Couldn't delete club !"})
     }
 }
 

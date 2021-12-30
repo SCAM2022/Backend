@@ -1,24 +1,18 @@
 const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
-
 const signUpSchema = new Schema({
   name: {
     type: String,
-    required: true,
   },
   email: {
     type: String,
-    required: true,
-    unique: true,
   },
   phone: {
     type: String,
-    required: true,
   },
   department: {
     type: String,
-    required: true,
   },
   rollno: {
     type: String,
@@ -30,7 +24,6 @@ const signUpSchema = new Schema({
   },
   year: {
     type: String,
-    required: true,
   },
   admissionYear: {
     type: String,
@@ -38,11 +31,14 @@ const signUpSchema = new Schema({
   },
   semester: {
     type: String,
-    required: true,
   },
   password: {
     type: String,
     required: true,
+  },
+  lastLogin:{
+    type:Date,
+    default:new Date()
   },
 });
 signUpSchema.statics.isThisEmail = async function (email) {
