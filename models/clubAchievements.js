@@ -9,7 +9,6 @@ const clubAchievments = new Schema({
     images: [{
         imgpath:{
             type: String,
-          required: true,
         },
     }]
 });

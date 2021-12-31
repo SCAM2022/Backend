@@ -134,9 +134,13 @@ exports.createClub = async(req,res,next)=>{
                 }
             ]
         })
+        const newAchievement = new achievements({
+            clubName : name,
+        })
         newClub.save()
          .then(result=>{
             newList.save()
+            newAchievement.save()
             .then(rslt =>{
                     const paths = newClub.authDocs.toString()
                     const baseDir = path.join(__dirname,'..')
@@ -298,5 +302,6 @@ exports.postDeleteClub = async(req,res,next)=>{
         res.status(400).json({msg:"Couldn't delete club !"})
     }
 }
+
 
 //module.exports=upload;
