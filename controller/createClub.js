@@ -173,10 +173,24 @@ exports.joinClub = async(req,res,next) =>{
     const joinedOn = obj.joinedOn;
     const id = obj.id;
 
-
     list.findOne({clubName})
         .then(list =>{
-
+            
+    User.findById(id)
+    .then(ele=>{
+        console.log(ele)
+        const clb = ele.joinedClubs;
+        clb.push({
+            clubName:clubName,
+            role:Role,
+            joinedOn:joinedOn
+        })
+        ele.joinedClubs = clb;
+        ele.save()
+        .then(re=>{
+            console.log(clb)
+        })
+    })
             const l = list.info;
             l.push(
                 {
@@ -189,34 +203,53 @@ exports.joinClub = async(req,res,next) =>{
             list.save()
                 .then(rslt =>{
                     console.log(l);
-             res.send('OK');
-
+                    res.send('OK')
                 })
         })
-
   
 }
 exports.leftClub = async(req,res,next) =>{
     const obj = JSON.parse(JSON.stringify(req.body));
     const clubName = obj.clubName;
     const id = obj.id;
-     list.findOneAndDelete({clubName:clubName},{info :{$eleMatch:{memberId:id}}})
-     .then(li=>{
-         console.log(li)
-        res.status(200).json({msg:"Club left successfully !"})
-     })
-        res.status(400).json({msg:"Couldn't deleted club !"})
-    // list.findOne({clubName})
-    //     .then(list =>{
-    //         console.log(list)
-    //         const l = list.info;
-    //        list.info.findOneAndDelete({memberId:id})
-    //          .then(li=>{
-    //             res.status(200).json({msg:"Club left successfully !"})
-    //          })
-    //             res.status(400).json({msg:"Couldn't deleted club !"})
-    //     })
-  
+
+    list.findOne({clubName})
+    .then(list =>{
+        User.findById(id)
+             .then(ele=>{
+        console.log(ele)
+        const arr = [];
+        ele.joinedClubs.map(e=>{
+            if(e.clubName!=clubName){
+                arr.push(e);
+            }
+        })
+       ele.joinedClubs = arr;
+       ele.save()
+       .then(re=>{
+           console.log(arr)
+       })
+   })
+    .catch(err=>{
+        res.status(404).json({msg:"User not found in this club !"})
+    })
+            const l=[] ;
+            list.info.map(ele=>{
+                if(ele.memberId!=id){
+                 l.push(ele)
+                }
+            })
+            list.info=l;
+            list.save()
+            .then(re=>{
+                // console.log(l);
+               res.status(200).json({msg:"Club left successfully !"})
+            })
+           .catch(err=>{
+            res.status(400).json({msg:"Couldn't left club !"})
+           })
+        })
+    
 }
 exports.postSingleClub = async(req,res,next)=>{
     const obj = JSON.parse(JSON.stringify(req.body));
@@ -244,6 +277,21 @@ exports.postDeleteClub = async(req,res,next)=>{
     const clubName = obj.clubName;
     const club = await Club.findOneAndDelete({name:clubName});
     const li = await list.findOneAndDelete({clubName});
+//     User.find()
+//              .then(ele=>{
+//         console.log(ele)
+//         const arr = [];
+//         ele.joinedClubs.map(e=>{
+//             if(e.clubName!=clubName){
+//                 arr.push(e);
+//             }
+//         })
+//        ele.joinedClubs = arr;
+//        ele.save()
+//        .then(re=>{
+//            console.log(arr)
+//        })
+//    })
     if(club&&li){
         res.status(200).json({msg:"Club deleted succesfully!"});
     }else{

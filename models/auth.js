@@ -36,6 +36,17 @@ const signUpSchema = new Schema({
     type: String,
     required: true,
   },
+  joinedClubs:[{
+       clubName:{
+         type:String
+       },
+       role:{
+         type:String
+       },
+       joinedOn:{
+         type:String
+       }
+  }],
   lastLogin:{
     type:Date,
     default:new Date()
