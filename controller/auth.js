@@ -170,9 +170,7 @@ exports.postSignIn = async(req,res,next) => {
     const matchpass = await bcrypt.compare(password,findStudent.password);
 
     if(matchpass){
-        const token = jwt.sign({email},"Khemchandpatel784@gamil.com_9691417515_kn8Rider",{
-            expiresIn:"1h"
-        });
+        const token = jwt.sign({email},"Khemchandpatel784@gamil.com_9691417515_kn8Rider");
         console.log(token);
         console.log('->',findStudent);
         SignUp.findByIdAndUpdate(findStudent._id,{lastLogin:new Date()})

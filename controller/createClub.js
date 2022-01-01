@@ -281,22 +281,33 @@ exports.postDeleteClub = async(req,res,next)=>{
     const clubName = obj.clubName;
     const club = await Club.findOneAndDelete({name:clubName});
     const li = await list.findOneAndDelete({clubName});
-//     User.find()
-//              .then(ele=>{
-//         console.log(ele)
-//         const arr = [];
-//         ele.joinedClubs.map(e=>{
-//             if(e.clubName!=clubName){
-//                 arr.push(e);
-//             }
-//         })
-//        ele.joinedClubs = arr;
-//        ele.save()
-//        .then(re=>{
-//            console.log(arr)
-//        })
-//    })
-    if(club&&li){
+    const achieve = await achievements.findOneAndDelete({clubName})
+    User.find()
+             .then(ele=>{
+        ele.map(val=>{
+            const arr = [];
+            val.joinedClubs.map(e=>{
+            if(e.clubName!=clubName){
+                arr.push(e);
+            }
+            console.log('data',arr)
+       val.joinedClubs = arr;
+         val.save()
+       .then(re=>{
+           console.log(arr)
+       })
+            })
+           
+        })
+        User.save()
+        .then(re=>{
+            console.log(re)
+        })
+   })
+   .catch(err=>{
+    res.status(400).json({msg:"Couldn't delete club !"})
+   })
+    if((club&&li)&&achieve){
         res.status(200).json({msg:"Club deleted succesfully!"});
     }else{
         res.status(400).json({msg:"Couldn't delete club !"})
