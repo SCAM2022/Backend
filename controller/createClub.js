@@ -191,6 +191,11 @@ exports.joinClub = async (req, res, next) => {
     User.findById(id).then((ele) => {
       console.log(ele);
       const clb = ele.joinedClubs;
+      clb.map(data =>{
+          if(data.clubName == clubName){
+              return res.json({msg: 'club Already Joined !'});
+          }
+      })
       clb.push({
         clubName: clubName,
         role: Role,
@@ -200,8 +205,7 @@ exports.joinClub = async (req, res, next) => {
       ele.save().then((re) => {
         console.log(clb);
       });
-    });
-    const l = list.info;
+      const l = list.info;
     l.push({
       prename: name,
       Role: Role,
@@ -212,6 +216,7 @@ exports.joinClub = async (req, res, next) => {
     list.save().then((rslt) => {
       console.log(l);
       res.send("OK");
+    });
     });
   });
 };
