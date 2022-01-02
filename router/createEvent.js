@@ -5,4 +5,5 @@ const Auth = require('../token/token')
 
 router.post('/createEvent',Auth,Event.postCreateEvent);
 router.post('/fetchEvents',Auth,Event.postFetchEvents);
+router.post('/fetchSingleEvent',Event.fetchSingleEvent);
 module.exports = router;

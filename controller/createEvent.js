@@ -53,6 +53,11 @@ exports.fetchSingleEvent = async(req,res,next) =>{
     const eveName = obj.eveName;
 
     const eveInfo = await Event.find({title: eveName});
+      if(!eveInfo.title){
+          return res.json({
+              message: 'Event Doesnt Exist !'
+          })
+      }
     res.json({
         eveInfo
     })
