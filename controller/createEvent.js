@@ -1,5 +1,15 @@
 const Event = require('../models/createEvent');
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
 
+const transporter = nodemailer.createTransport(
+  sendgridTransport({
+    auth: {
+      api_key:
+        'SG.ir0lZRlOSaGxAa2RFbIAXA.O6uJhFKcW-T1VeVIVeTYtxZDHmcgS1-oQJ4fkwGZcJISG.isMgxf5qREipreU4wUhxOA.9yASOrov4canYHKLoVnPBwFDbyHoR8zYY2nus775rbI'
+    }
+  })
+);
 
 exports.postCreateEvent = async(req,res,next) => {
     //console.log(req. body);
@@ -93,4 +103,29 @@ exports.postFetchEvents = async(req,res,next) => {
             msg:"Couldn't find event!"
         }).redirect('/');
     }
+}
+exports.setReminder = async(req,res,next) =>{
+    const obj = JSON.parse(JSON.stringify(req.body));
+    const userName = obj.name;
+    const eveName = obj.eveName;
+    const dateInString = obj.date;
+    const date = new Date(dateInString);
+    const eveTime = date.getTime() / 1000;
+    const currentDateTime = new Date();
+    const currInSeconds=currentDateTime.getTime() / 1000;
+    const timeOutTime = eveTime - currInSeconds;
+    setTimeout(() => {
+        transporter.sendMail({
+            to: email,
+            from: 'SCAM_2022@gmail.com',
+            subject: 'Signed Up',
+            html: `
+              <p>Hello ${userName}</p>
+              <p>${eveName} is going to start at ${dateInString}</p>
+            `
+          });
+    },timeOutTime);
+}
+exports.participationList = async(req,res,next) =>{
+    
 }

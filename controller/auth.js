@@ -2,7 +2,17 @@ const SignUp = require("../models/auth");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
+const nodemailer = require('nodemailer');
+const sendgridTransport = require('nodemailer-sendgrid-transport');
 
+const transporter = nodemailer.createTransport(
+  sendgridTransport({
+    auth: {
+      api_key:
+        'SG.ir0lZRlOSaGxAa2RFbIAXA.O6uJhFKcW-T1VeVIVeTYtxZDHmcgS1-oQJ4fkwGZcJISG.isMgxf5qREipreU4wUhxOA.9yASOrov4canYHKLoVnPBwFDbyHoR8zYY2nus775rbI'
+    }
+  })
+);
 //checking email is present or not
 exports.postCheckEmail = async (req, res, next) => {
   try {
@@ -101,6 +111,16 @@ exports.postSignUp = async (req, res, next) => {
     .save()
     .then((result) => {
       console.log("SignedUp !");
+      res.redirect('/');
+        transporter.sendMail({
+          to: email,
+          from: 'SCAM_2022@gmail.com',
+          subject: 'Signed Up',
+          html: `
+            <p>Welcome ${name}</p>
+            <p>You are signed up Successfully !</p>
+          `
+        });
       res
         .status(200)
         .json({
