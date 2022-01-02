@@ -11,6 +11,22 @@ const createEventSchema = new Schema({
         type: String,
         required: true,
     }],
+    aboutOrganizingClub:{
+        type: String,
+        required: true,
+    },
+    goodies:{
+        type: String,
+        required: true,
+    },
+    eliCriteria:{
+        type: String,
+        required: true,
+    },
+    rules:{
+        type: String,
+        required: true,
+    },
     startDate:{
         type: String,
         required: true,

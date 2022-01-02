@@ -139,6 +139,21 @@ exports.createClub = async(req,res,next)=>{
         })
         newClub.save()
          .then(result=>{
+            User.findById(id)
+            .then(ele=>{
+                console.log(ele)
+                const clb = ele.joinedClubs;
+                clb.push({
+                    clubName:clubName,
+                    role:Role,
+                    joinedOn:joinedOn
+                })
+                ele.joinedClubs = clb;
+                ele.save()
+                .then(re=>{
+                    console.log(clb)
+                })
+            })
             newList.save()
             newAchievement.save()
             .then(rslt =>{
@@ -147,6 +162,7 @@ exports.createClub = async(req,res,next)=>{
                     // console.log(base)
                      res.status(200).json({newClub,baseDir});
            })
+           
            .catch(err =>{
             res.status(400).json({msg:"Couldn't created club !!"})
             console.log(err);
@@ -235,7 +251,7 @@ exports.leftClub = async(req,res,next) =>{
        })
    })
     .catch(err=>{
-        res.status(404).json({msg:"User not found in this club !"})
+       return res.status(404).json({msg:"User not found in this club !"})
     })
             const l=[] ;
             list.info.map(ele=>{

@@ -15,12 +15,19 @@ exports.postCreateEvent = async(req,res,next) => {
     const location = obj.location;
     const incharge = obj.incharge;
     const clubName = obj.clubName;
-    
+    const orgClub = obj.orgClub;
+    const goodies = obj.goodies;
+    const eliCriteria = eliCriteria;
+    const rules = rules;
 
     const user = new Event({
         title: title,
         category: category,
         discription: discription,
+        aboutOrganizingClub: orgClub,
+        goodies: goodies,
+        eliCriteria: eliCriteria,
+        rules: rules,
        startDate:startDate,
         endDate: endDate,
         startTime:startTime,
@@ -40,6 +47,15 @@ exports.postCreateEvent = async(req,res,next) => {
         .catch(err =>{
             console.log(err);
         })
+}
+exports.fetchSingleEvent = async(req,res,next) =>{
+    const obj = JSON.parse(JSON.stringify(req.body))
+    const eveName = obj.eveName;
+
+    const eveInfo = await Event.find({title: eveName});
+    res.json({
+        eveInfo
+    })
 }
 exports.postFetchEvents = async(req,res,next) => {
     //console.log(req. body);
