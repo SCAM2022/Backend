@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport(
   sendgridTransport({
     auth: {
       api_key:
-        'SG.ir0lZRlOSaGxAa2RFbIAXA.O6uJhFKcW-T1VeVIVeTYtxZDHmcgS1-oQJ4fkwGZcJISG.isMgxf5qREipreU4wUhxOA.9yASOrov4canYHKLoVnPBwFDbyHoR8zYY2nus775rbI'
+        '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'
     }
   })
 );
@@ -111,10 +111,9 @@ exports.postSignUp = async (req, res, next) => {
     .save()
     .then((result) => {
       console.log("SignedUp !");
-      res.redirect('/');
         transporter.sendMail({
           to: email,
-          from: 'SCAM_2022@gmail.com',
+          from: 'sahilmohammad532@gmail.com',
           subject: 'Signed Up',
           html: `
             <p>Welcome ${name}</p>
@@ -127,7 +126,6 @@ exports.postSignUp = async (req, res, next) => {
           success: true,
           msg: "User Registered Successfully !",
         })
-        .redirect("/");
     })
     .catch((err) => {
       console.log(err);

@@ -7,7 +7,7 @@ const transporter = nodemailer.createTransport(
   sendgridTransport({
     auth: {
       api_key:
-        'SG.ir0lZRlOSaGxAa2RFbIAXA.O6uJhFKcW-T1VeVIVeTYtxZDHmcgS1-oQJ4fkwGZcJISG.isMgxf5qREipreU4wUhxOA.9yASOrov4canYHKLoVnPBwFDbyHoR8zYY2nus775rbI'
+        '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'
     }
   })
 );
@@ -64,7 +64,7 @@ exports.fetchSingleEvent = async(req,res,next) =>{
     const eveName = obj.eveName;
 
     const eveInfo = await Event.find({title: eveName});
-      if(!eveInfo.title){
+      if(!eveInfo){
           return res.json({
               message: 'Event Doesnt Exist !'
           })
@@ -110,6 +110,7 @@ exports.setReminder = async(req,res,next) =>{
     const userName = obj.name;
     const eveName = obj.eveName;
     const dateInString = obj.date;
+    const email = obj.email
     const date = new Date(dateInString);
     const eveTime = date.getTime() / 1000;
     const currentDateTime = new Date();
@@ -118,7 +119,7 @@ exports.setReminder = async(req,res,next) =>{
     setTimeout(() => {
         transporter.sendMail({
             to: email,
-            from: 'SCAM_2022@gmail.com',
+            from: 'sahilmohammad532@gmail.com',
             subject: 'Signed Up',
             html: `
               <p>Hello ${userName}</p>
@@ -126,6 +127,7 @@ exports.setReminder = async(req,res,next) =>{
             `
           });
     },timeOutTime);
+    res.send('OK')
 }
 exports.participationList = async(req,res,next) =>{
     const obj = JSON.parse(JSON.stringify(req.body));
