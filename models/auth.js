@@ -47,6 +47,14 @@ const signUpSchema = new Schema({
          type:String
        }
   }],
+  participatedEvents:[{
+    eventId:{
+      type:String
+    },
+    eventName:{
+      type:String
+    }
+}],
   lastLogin:{
     type:Date,
     default:new Date()

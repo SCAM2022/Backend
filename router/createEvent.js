@@ -7,4 +7,6 @@ router.post('/createEvent',Auth,Event.postCreateEvent);
 router.post('/fetchEvents',Auth,Event.postFetchEvents);
 router.post('/fetchSingleEvent',Event.fetchSingleEvent);
 router.post('/setReminder',Auth,Event.setReminder)
+router.post('/addParticipant',Auth,Event.participationList)
+router.post('/fetchParticipationList',Auth,Event.fetchParticipationList)
 module.exports = router;

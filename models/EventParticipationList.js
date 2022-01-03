@@ -9,8 +9,13 @@ const participationList = new Schema({
     participatedStudents: [{
         name:{
             type: String,
-          required: true,
-        }
+        },
+        memeberId:{
+            type: String,
+        },
+        branch:{
+            type: String,
+        },
     }],
     });
 module.exports = mongoose.model('participationList',participationList);
