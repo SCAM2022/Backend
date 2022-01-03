@@ -1,6 +1,7 @@
 const Event = require('../models/createEvent');
 const nodemailer = require('nodemailer');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
+const participatingList = require('../models/EventParticipationList');
 
 const transporter = nodemailer.createTransport(
   sendgridTransport({
@@ -127,5 +128,11 @@ exports.setReminder = async(req,res,next) =>{
     },timeOutTime);
 }
 exports.participationList = async(req,res,next) =>{
-    
+    const obj = JSON.parse(JSON.stringify(req.body));
+    const eventId = obj.eventId;
+    const studentId = obj.studentId;
+
+    const getEvent = await Event.findById(eventId);
+    const list = await participatingList.find({title: getEvent.title})
+          console.log(list);
 }
