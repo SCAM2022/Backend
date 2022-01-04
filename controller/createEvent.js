@@ -1,8 +1,8 @@
 const Event = require('../models/createEvent');
 const nodemailer = require('nodemailer');
 const sendgridTransport = require('nodemailer-sendgrid-transport');
-const participatingList = require('../models/EventParticipationList');
-
+const User = require('../models/auth')
+const ParticipationList = require('../models/EventParticipationList')
 const transporter = nodemailer.createTransport(
   sendgridTransport({
     auth: {
@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport(
 );
 
 exports.postCreateEvent = async(req,res,next) => {
-    //console.log(req. body);
+    //console.log(req.body);
   
     const obj = JSON.parse(JSON.stringify(req.body));
     console.log(obj);
@@ -46,10 +46,17 @@ exports.postCreateEvent = async(req,res,next) => {
     })
     user.save()
         .then(result =>{
-            console.log('Event created successfully!');
-            res.status(200).json({
-                success:true,
-                msg:"Event created successfully!"
+            const participationList = new ParticipationList({
+                eventName:title,
+                participatedStudents:[]
+            })
+            participationList.save()
+            .then(re=>{
+                console.log('Event created successfully!');
+                res.status(200).json({
+                    success:true,
+                    msg:"Event created successfully!"
+                });
             })
             
         })
@@ -124,10 +131,54 @@ exports.setReminder = async(req,res,next) =>{
 }
 exports.participationList = async(req,res,next) =>{
     const obj = JSON.parse(JSON.stringify(req.body));
-    const eventId = obj.eventId;
-    const studentId = obj.studentId;
+    const userId = obj.userId;
+    const eventId = obj.eveId;
+    const user = await User.findById(userId);
+    const event = await Event.findById(eventId);
+    if(user&&event){
+        ParticipationList.findOne({eventName:event.title})
+        .then(re=>{
+           const li = re.participatedStudents;
+           li.push({
+               name:user.name,
+               memberId:user._id,
+               branch:user.department
+           })
+           re.participatedStudents = li;
+           re.save()
+           .then(data=>{
+                const pi = user.participatedEvents;
+                pi.push({
+                    eventId:eventId,
+                    eventName:event.title
+                })
+                user.participatedEvents=pi;
+                user.save()
+                .then(se=>{
+                    res.send('OK')
+                })
+               
+           }).catch(err=>{
+               console.log(err)
+           })
+        })
+        .catch(err=>{
+            res.status(404).json({msg:"Event not found !!!"})
+        })
+    }
+    else{
+        res.status(404).json({msg:"Event not found !!!"})
+    }
 
-    const getEvent = await Event.findById(eventId);
-    const list = await participatingList.find({title: getEvent.title})
-          console.log(list);
+}
+exports.fetchParticipationList = async(req,res,next)=>{
+    const obj = JSON.parse(JSON.stringify(req.body));
+    const eventId = obj.eveId;
+    const event = await Event.findById(eventId);
+    const list = await ParticipationList.findOne({eventName:event.title});
+    if(list){
+        res.status(200).json(list);
+    }else{
+        res.status(404).json({msg:"Event not found !!!"});
+    }
 }
