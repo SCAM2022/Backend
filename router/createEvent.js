@@ -3,7 +3,7 @@ const Event = require('../controller/createEvent')
 const router = express.Router();
 const Auth = require('../token/token')
 router.post('/createEvent',Auth,Event.postCreateEvent);
-router.post('/fetchEvents',Auth,Event.postFetchEvents);
+router.get('/fetchEvents',Event.postFetchEvents);
 router.post('/fetchSingleEvent',Event.fetchSingleEvent);
 router.post('/setReminder',Auth,Event.setReminder)
 router.post('/addParticipant',Auth,Event.participationList)

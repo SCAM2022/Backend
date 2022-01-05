@@ -18,7 +18,6 @@ exports.postCreateEvent = async(req,res,next) => {
     const obj = JSON.parse(JSON.stringify(req.body));
     console.log(obj);
     const title = obj.title;
-    const category = obj.category;
     const discription = obj.discription;
     const startDate = obj.startDate;
     const endDate = obj.endDate;
@@ -26,15 +25,15 @@ exports.postCreateEvent = async(req,res,next) => {
     const location = obj.location;
     const incharge = obj.incharge;
     const clubName = obj.clubName;
-    const orgClub = obj.orgClub;
     const goodies = obj.goodies;
     const eliCriteria = obj.eliCriteria;
+    const timeDuration = obj.timeDuration;
     const rules = obj.rules;
+
     const user = new Event({
         title: title,
-        category: category,
         discription: discription,
-        aboutOrganizingClub: orgClub,
+        timeDuration: timeDuration,
         goodies: goodies,
         eliCriteria: eliCriteria,
         rules: rules,
@@ -43,7 +42,7 @@ exports.postCreateEvent = async(req,res,next) => {
         startTime:startTime,
         location:location,
         eventIncharge:incharge,
-        createdBy:clubName
+        createdBy:clubName,
     })
     user.save()
         .then(result =>{
@@ -81,13 +80,8 @@ exports.fetchSingleEvent = async(req,res,next) =>{
 }
 exports.postFetchEvents = async(req,res,next) => {
     //console.log(req. body);
-  
-    const obj = JSON.parse(JSON.stringify(req.body));
-    console.log(obj);
-
-    const clubName = obj.clubName;
     
-    const events =  await Event.find({createdBy:clubName});
+    const events =  await Event.find();
     // user.save()
     //     .then(result =>{
             // console.log('Event created successfully!');
@@ -103,12 +97,12 @@ exports.postFetchEvents = async(req,res,next) => {
         console.log('Event find successfully!');
         res.status(200).json({
             events
-        }).redirect('/');
+        })
     }else{
         res.status(400).json({
             success:false,
             msg:"Couldn't find event!"
-        }).redirect('/');
+        })
     }
 }
 exports.setReminder = async(req,res,next) =>{

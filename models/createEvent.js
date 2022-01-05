@@ -7,11 +7,11 @@ const createEventSchema = new Schema({
       type: String,
       required: true,
     },
-    category:[{
+    discription:[{
         type: String,
         required: true,
     }],
-    aboutOrganizingClub:{
+    timeDuration:{
         type: String,
         required: true,
     },
