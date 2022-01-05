@@ -11,7 +11,6 @@ const router = express.Router();
 
 
 const path = require('path');
-const clubAchievements = require('../models/clubAchievements');
 
 app.set('views',path.join(__dirname,'views'));
 app.use(express.static(`${__dirname}/public`))
@@ -62,4 +61,20 @@ exports.uploadImages = async(req,res,next)=>{
     .catch(e=>{
         res.status(400).json({msg:"image couldn't uploaded  !!"})
     })
+}
+exports.fetchClubAchievements = async(req,res,next)=>{
+    // console.log(req.file)
+    const obj = JSON.parse(JSON.stringify(req.body));
+    const clubName = obj.clubName;
+   const achv = await achievements.findOne({clubName});
+   if(achv){
+    const baseDir = path.join(__dirname, "..");
+    res.status(200).json({
+        achv,baseDir
+    })
+   }
+   else{
+    res.status(404).json({msg:"club not found"})
+
+   }
 }

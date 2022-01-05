@@ -14,4 +14,5 @@ router.post('/memberList',authController.getMemberList)
 router.post('/deleteClub',Auth,authController.postDeleteClub)
 router.post('/leftClub',Auth,authController.leftClub)
 router.post('/uploadClubAcievements',Auth,clubAchievements.uploadImg.single('img'),clubAchievements.uploadImages)
+router.post('/fetchAchievements',clubAchievements.fetchClubAchievements)
 module.exports = router;

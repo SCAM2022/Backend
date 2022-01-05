@@ -10,12 +10,16 @@ const participationList = new Schema({
         name:{
             type: String,
         },
-        memeberId:{
+        memberId:{
             type: String,
         },
         branch:{
             type: String,
         },
+        isAttend:{
+            type:Boolean,
+            default:false
+        }
     }],
     });
 module.exports = mongoose.model('participationList',participationList);

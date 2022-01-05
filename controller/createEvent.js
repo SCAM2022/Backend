@@ -147,7 +147,7 @@ exports.participationList = async(req,res,next) =>{
            const li = re.participatedStudents;
            li.push({
                name:user.name,
-               memberId:user._id,
+               memberId:userId,
                branch:user.department
            })
            re.participatedStudents = li;
@@ -187,4 +187,34 @@ exports.fetchParticipationList = async(req,res,next)=>{
     }else{
         res.status(404).json({msg:"Event not found !!!"});
     }
+}
+exports.addEventsToProfile = async(req,res,next)=>{
+    const obj = JSON.parse(JSON.stringify(req.body));
+    const date = obj.date;
+    const eventId = obj._id;
+    const eventName = obj.eventName;
+    const list = obj.participatedStudents;
+    // console.log(list)
+    list.map(async (val)=>{
+        const user = await User.findById(val.memberId);
+        if(user){
+            if(val.isAttend){
+                const l = user.attendedEvents;
+                l.push({
+                    date:date,
+                    eventId:eventId,
+                    eventName:eventName
+                })
+                user.attendedEvents = l;
+            }
+        user.save()
+        .then(re=>{
+            clg('done')
+        }).catch(err=>{
+             res.status(404).json({msg:"User not found !!!"});
+        })
+        }
+     
+    })
+    res.status(200).send("OK");
 }

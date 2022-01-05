@@ -55,6 +55,17 @@ const signUpSchema = new Schema({
       type:String
     }
 }],
+attendedEvents:[{
+    date:{
+      type:String,
+    },
+    eventId:{
+        type:String
+      },
+      eventName:{
+        type:String
+      }
+}],
   lastLogin:{
     type:Date,
     default:new Date()
