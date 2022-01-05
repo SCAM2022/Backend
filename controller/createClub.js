@@ -2,6 +2,7 @@ const Club = require("../models/craeteClub");
 const list = require("../models/Memberlist");
 const achievements = require("../models/clubAchievements");
 const User = require("../models/auth");
+const Chat = require("../models/testomonial")
 const express = require("express");
 const fs = require("fs");
 const app = express();
@@ -129,6 +130,10 @@ exports.createClub = async (req, res, next) => {
         },
       ],
     });
+    const chat = new Chat({
+      clubName:name
+    })
+    chat.save()
     const newAchievement = new achievements({
       clubName: name,
     });
@@ -150,6 +155,7 @@ exports.createClub = async (req, res, next) => {
         });
 
         newList.save();
+        chat.save();
         newAchievement
           .save()
           .then((rslt) => {
@@ -287,6 +293,7 @@ exports.postDeleteClub = async (req, res, next) => {
   const club = await Club.findOneAndDelete({ name: clubName });
   const li = await list.findOneAndDelete({ clubName });
   const achieve = await achievements.findOneAndDelete({ clubName });
+  const chat = await Chat.findOneAndDelete({clubName});
   User.find()
     .then((ele) => {
       ele.map((val) => {
@@ -309,11 +316,104 @@ exports.postDeleteClub = async (req, res, next) => {
     .catch((err) => {
       res.status(400).json({ msg: "Couldn't delete club !" });
     });
-  if (club && li && achieve) {
+  if (club && li && achieve && chat) {
     res.status(200).json({ msg: "Club deleted succesfully!" });
   } else {
     res.status(400).json({ msg: "Couldn't delete club !" });
   }
 };
 
+exports.chats = async(req,res,next)=>{
+  const obj = JSON.parse(JSON.stringify(req.body));
+  const clubName = obj.clubName;
+  const memberId = obj.memberId;
+  const msg = obj.msg;
+  const member = await User.findById(memberId);
+  const chat = await Chat.findOne({clubName:clubName});
+  if(chat && this.getMemberList){
+    const li = chat.chats;
+    li.push({
+      memberId:memberId,
+      msg:msg,
+      memberName:member.name
+    })
+    chat.chats=li;
+    chat.save()
+    .then(re=>{
+    res.status(200).json({ msg: "message sent successfully!" });
+    }).catch(err=>{
+    res.status(400).json({ msg: "message not sent !" });
+    })
+  }else{
+    res.status(404).json({ msg: "Club not found !" });
+  }
+}
+exports.editMsg = async(req,res,next)=>{
+  const obj = JSON.parse(JSON.stringify(req.body));
+  const clubName = obj.clubName;
+  const msgId = obj.msgId;
+  const memberId = obj.memberId;
+  const msg = obj.msg;
+  const member = await User.findById(memberId);
+  const chat = await Chat.findOne({clubName:clubName});
+  if(chat && member){
+    const li = chat.chats;
+    li.map(val=>{
+      if(val._id==msgId){
+          val.msg=msg,
+          val.memberId=memberId,
+          val.memberName=member.name
+      }
+    })
+    chat.save()
+    .then(re=>{
+    res.status(200).json({ msg: "message edited successfully!" });
+    }).catch(err=>{
+    res.status(400).json({ msg: " couldn't edit message !" });
+    })
+  }else{
+    res.status(404).json({ msg: "Club not found !" });
+  }
+}
+
+exports.deleteMsg = async(req,res,next)=>{
+  const obj = JSON.parse(JSON.stringify(req.body));
+  const clubName = obj.clubName;
+  const msgId = obj.msgId;
+  const memberId = obj.memberId;
+  const club = await list.findOne({clubName});
+  // console.log(club);
+  const chat = await Chat.findOne({clubName:clubName});
+  if(chat && club){
+    let president=false;
+    club.info.map(dat=>{
+      if(dat.memberId==memberId){
+        if(dat.Role=="President"){
+          president=true;
+        }
+      }
+    })
+    if(president){
+      const li = chat.chats;
+      const newList = [];
+    li.map(val=>{
+      if(val._id!=msgId){
+        newList.push(val);
+      }
+    })
+    chat.chats=newList;
+    chat.save()
+    .then(re=>{
+    res.status(200).json({ msg: "message deleted successfully!" });
+    }).catch(err=>{
+    res.status(400).json({ msg: " you don't have rights to delete msg  !" });
+    })
+    }
+    else{
+    res.status(400).json({ msg: "you don't  rights to delete msg !" });
+    }
+  }else{
+    res.status(404).json({ msg: "Club not found !" });
+  }
+}
 //module.exports=upload;

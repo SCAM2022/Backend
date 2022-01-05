@@ -142,7 +142,9 @@ exports.participationList = async(req,res,next) =>{
            li.push({
                name:user.name,
                memberId:userId,
-               branch:user.department
+               branch:user.department,
+               roll:user.rollno,
+               email:user.email
            })
            re.participatedStudents = li;
            re.save()

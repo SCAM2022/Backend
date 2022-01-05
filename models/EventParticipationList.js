@@ -13,6 +13,12 @@ const participationList = new Schema({
         memberId:{
             type: String,
         },
+        email:{
+            type: String,
+        },
+        roll:{
+            type: String,
+        },
         branch:{
             type: String,
         },
