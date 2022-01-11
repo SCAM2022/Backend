@@ -193,7 +193,14 @@ exports.addEventsToProfile = async(req,res,next)=>{
     // console.log(list)
     list.map(async (val)=>{
         const user = await User.findById(val.memberId);
+        const event = await Event.findById(eventId);
+        const list2 = await ParticipationList.findOne({eventName:event.title});
         if(user){
+            list2.participatedStudents=obj.participatedStudents;
+            list2.save()
+            .then(re=>{
+                console.log('done!!');
+            })
             if(val.isAttend){
                 const l = user.attendedEvents;
                 l.push({
