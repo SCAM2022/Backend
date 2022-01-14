@@ -77,6 +77,7 @@ exports.fetchSingleEvent = async (req, res, next) => {
     eveInfo,
   });
 };
+
 exports.postFetchEvents = async (req, res, next) => {
   //console.log(req. body);
 
@@ -165,12 +166,10 @@ exports.participationList = async (req, res, next) => {
           });
       })
       .catch((err) => {
-        res
-          .status(404)
-          .json({
-            msg: "error while adding user to ParticipantList !!!",
-            error: err,
-          });
+        res.status(404).json({
+          msg: "error while adding user to ParticipantList !!!",
+          error: err,
+        });
       });
   } else {
     res.status(404).json({ msg: "Event not found !!!" });
@@ -194,10 +193,16 @@ exports.addEventsToProfile = async (req, res, next) => {
     const eventId = obj._id;
     const eventName = obj.eventName;
     const list = obj.participatedStudents;
-    console.log(obj);
+    // console.log(list)
     list.map(async (val) => {
       const user = await User.findById(val.memberId);
+      const event = await Event.findById(eventId);
+      const list2 = await ParticipationList.findOne({ eventName: eventName });
       if (user) {
+        list2.participatedStudents = obj.participatedStudents;
+        list2.save().then((re) => {
+          console.log("done!!");
+        });
         if (val.isAttend) {
           const l = user.attendedEvents;
           l.push({
@@ -210,12 +215,20 @@ exports.addEventsToProfile = async (req, res, next) => {
         user
           .save()
           .then((re) => {
-            console.log("done");
+            clg("done");
           })
           .catch((err) => {
-            return res.status(404).json({ msg: "User not found !!!" });
+            res.status(404).json({ msg: "User not found !!!" });
           });
       }
+      user
+        .save()
+        .then((re) => {
+          console.log("done");
+        })
+        .catch((err) => {
+          return res.status(404).json({ msg: "User not found !!!" });
+        });
     });
     return res.status(200).send("OK");
   } catch (e) {
