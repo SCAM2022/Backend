@@ -52,13 +52,13 @@ exports.checkClub = async (req, res, next) => {
         msg: "The Club name is already exist !",
       });
     }
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       type: "name",
       msg: "The Club name is unique!",
     });
   } catch (e) {
-    res.status(400).send(e);
+    return res.status(400).send(e);
   }
 };
 exports.createClub = async (req, res, next) => {
@@ -162,27 +162,28 @@ exports.createClub = async (req, res, next) => {
             const paths = newClub.authDocs.toString();
             const baseDir = path.join(__dirname, "..");
             // console.log(base)
-            res.status(200).json({ newClub, baseDir });
+            return res.status(200).json({ newClub, baseDir });
           })
           .catch((err) => {
-            res.status(400).json({ msg: "Couldn't created club !!" });
+            return res.status(400).json({ msg: "Couldn't created club !!" });
             console.log(err);
           });
       })
       .catch((err) => {
-        res.status(400).json({ msg: "Couldn't created club !!" });
+        return res.status(400).json({ msg: "Couldn't created club !!" });
         console.log(err);
       });
   } catch (e) {
-    res.status(400).send(e);
+    return res.status(400).send(e);
   }
 };
 exports.findClub = async (req, res, next) => {
   const clubs = await Club.find();
   if (clubs) {
-    res.status(200).send(clubs);
+    const baseDir = path.join(__dirname, "..");
+    return res.status(200).send({clubs,baseDir});
   } else {
-    res.status(400).json({ msg: "Couldn't find club !" });
+    return res.status(400).json({ msg: "Couldn't find club !" });
   }
 };
 exports.joinClub = async (req, res, next) => {
@@ -221,7 +222,7 @@ exports.joinClub = async (req, res, next) => {
     list.info = l;
     list.save().then((rslt) => {
       console.log(l);
-      res.send("OK");
+      return res.send("OK");
     });
     });
   });
@@ -247,7 +248,7 @@ exports.leftClub = async (req, res, next) => {
         });
       })
       .catch((err) => {
-        res.status(404).json({ msg: "User not found in this club !" });
+        return res.status(404).json({ msg: "User not found in this club !" });
       });
     const l = [];
     list.info.map((ele) => {
@@ -260,10 +261,10 @@ exports.leftClub = async (req, res, next) => {
       .save()
       .then((re) => {
         // console.log(l);
-        res.status(200).json({ msg: "Club left successfully !" });
+        return res.status(200).json({ msg: "Club left successfully !" });
       })
       .catch((err) => {
-        res.status(400).json({ msg: "Couldn't left club !" });
+        return res.status(400).json({ msg: "Couldn't left club !" });
       });
   });
 };
@@ -272,9 +273,10 @@ exports.postSingleClub = async (req, res, next) => {
   const clubName = obj.clubName;
   const club = await Club.findOne({ name: clubName });
   if (club) {
-    res.status(200).send(club);
+    const baseDir = path.join(__dirname, "..");
+    return res.status(200).send({club,baseDir});
   } else {
-    res.status(400).json({ msg: "Couldn't find club !" });
+    return res.status(400).json({ msg: "Couldn't find club !" });
   }
 };
 exports.getMemberList = async (req, res, next) => {
@@ -282,9 +284,9 @@ exports.getMemberList = async (req, res, next) => {
   const clubName = obj.clubName;
   const members = await list.find({ clubName: clubName });
   if (members) {
-    res.status(200).send(members);
+    return res.status(200).send(members);
   } else {
-    res.status(400).json({ msg: "Couldn't find club !" });
+    return res.status(400).json({ msg: "Couldn't find club !" });
   }
 };
 exports.postDeleteClub = async (req, res, next) => {
@@ -314,12 +316,12 @@ exports.postDeleteClub = async (req, res, next) => {
       });
     })
     .catch((err) => {
-      res.status(400).json({ msg: "Couldn't delete club !" });
+      return res.status(400).json({ msg: "Couldn't delete club !" });
     });
   if (club && li && achieve && chat) {
-    res.status(200).json({ msg: "Club deleted succesfully!" });
+    return res.status(200).json({ msg: "Club deleted succesfully!" });
   } else {
-    res.status(400).json({ msg: "Couldn't delete club !" });
+    return res.status(400).json({ msg: "Couldn't delete club !" });
   }
 };
 
@@ -340,12 +342,12 @@ exports.chats = async(req,res,next)=>{
     chat.chats=li;
     chat.save()
     .then(re=>{
-    res.status(200).json({ msg: "message sent successfully!" });
+      return res.status(200).json({ msg: "message sent successfully!" });
     }).catch(err=>{
-    res.status(400).json({ msg: "message not sent !" });
+      return res.status(400).json({ msg: "message not sent !" });
     })
   }else{
-    res.status(404).json({ msg: "Club not found !" });
+    return res.status(404).json({ msg: "Club not found !" });
   }
 }
 exports.editMsg = async(req,res,next)=>{
@@ -367,12 +369,12 @@ exports.editMsg = async(req,res,next)=>{
     })
     chat.save()
     .then(re=>{
-    res.status(200).json({ msg: "message edited successfully!" });
+      return res.status(200).json({ msg: "message edited successfully!" });
     }).catch(err=>{
-    res.status(400).json({ msg: " couldn't edit message !" });
+    return res.status(400).json({ msg: " couldn't edit message !" });
     })
   }else{
-    res.status(404).json({ msg: "Club not found !" });
+    return res.status(404).json({ msg: "Club not found !" });
   }
 }
 
@@ -404,16 +406,16 @@ exports.deleteMsg = async(req,res,next)=>{
     chat.chats=newList;
     chat.save()
     .then(re=>{
-    res.status(200).json({ msg: "message deleted successfully!" });
+      return res.status(200).json({ msg: "message deleted successfully!" });
     }).catch(err=>{
-    res.status(400).json({ msg: " you don't have rights to delete msg  !" });
+      return res.status(400).json({ msg: " you don't have rights to delete msg  !" });
     })
     }
     else{
-    res.status(400).json({ msg: "you don't  rights to delete msg !" });
+      return res.status(400).json({ msg: "you don't  rights to delete msg !" });
     }
   }else{
-    res.status(404).json({ msg: "Club not found !" });
+    return res.status(404).json({ msg: "Club not found !" });
   }
 }
 //module.exports=upload;

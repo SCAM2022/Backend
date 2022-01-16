@@ -53,7 +53,7 @@ exports.postCreateEvent = async(req,res,next) => {
             participationList.save()
             .then(re=>{
                 console.log('Event created successfully!');
-                res.status(200).json({
+                return res.status(200).json({
                     success:true,
                     msg:"Event created successfully!"
                 });
@@ -74,7 +74,7 @@ exports.fetchSingleEvent = async(req,res,next) =>{
               message: 'Event Doesnt Exist !'
           })
       }
-    res.json({
+      return res.json({
         eveInfo
     })
 }
@@ -95,11 +95,11 @@ exports.postFetchEvents = async(req,res,next) => {
     //     })
     if(events.length>0){
         console.log('Event find successfully!');
-        res.status(200).json({
+        return res.status(200).json({
             events
         })
     }else{
-        res.status(400).json({
+        return res.status(400).json({
             success:false,
             msg:"Couldn't find event!"
         })
@@ -127,7 +127,7 @@ exports.setReminder = async(req,res,next) =>{
             `
           });
     },timeOutTime);
-    res.send('OK')
+    return res.send('OK')
 }
 exports.participationList = async(req,res,next) =>{
     const obj = JSON.parse(JSON.stringify(req.body));
@@ -157,7 +157,7 @@ exports.participationList = async(req,res,next) =>{
                 user.participatedEvents=pi;
                 user.save()
                 .then(se=>{
-                    res.send('OK')
+                    return res.send('OK')
                 })
                
            }).catch(err=>{
@@ -165,11 +165,11 @@ exports.participationList = async(req,res,next) =>{
            })
         })
         .catch(err=>{
-            res.status(404).json({msg:"Event not found !!!"})
+            return res.status(404).json({msg:"Event not found !!!"})
         })
     }
     else{
-        res.status(404).json({msg:"Event not found !!!"})
+        return res.status(404).json({msg:"Event not found !!!"})
     }
 
 }
@@ -179,9 +179,9 @@ exports.fetchParticipationList = async(req,res,next)=>{
     const event = await Event.findById(eventId);
     const list = await ParticipationList.findOne({eventName:event.title});
     if(list){
-        res.status(200).json(list);
+       return res.status(200).json(list);
     }else{
-        res.status(404).json({msg:"Event not found !!!"});
+        return res.status(404).json({msg:"Event not found !!!"});
     }
 }
 exports.addEventsToProfile = async(req,res,next)=>{
@@ -214,10 +214,10 @@ exports.addEventsToProfile = async(req,res,next)=>{
         .then(re=>{
             clg('done')
         }).catch(err=>{
-             res.status(404).json({msg:"User not found !!!"});
+           return  res.status(404).json({msg:"User not found !!!"});
         })
         }
      
     })
-    res.status(200).send("OK");
+   return res.status(200).send("OK");
 }

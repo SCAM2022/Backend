@@ -28,13 +28,13 @@ exports.postCheckEmail = async (req, res, next) => {
     const email = obj.email;
     const newUser = await SignUp.isThisEmail(email);
     if (!newUser)
-      res.status(400).json({
+    return res.status(400).json({
         success: false,
         type: "email",
         msg: "This email is already taken !",
       });
     else {
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
         type: "email",
         msg: "This email is unique!",
@@ -70,7 +70,7 @@ exports.postCheckRoll = async (req, res, next) => {
       msg: "This Enrollment number  is already prensent",
     });
   else {
-    res.status(200).json({
+    return res.status(200).json({
       success: true,
       type: "rollNumber and Enrollment",
       msg: "This Roll number and Enrollment Number is unique",
@@ -120,7 +120,7 @@ exports.postSignUp = async (req, res, next) => {
             <p>You are signed up Successfully !</p>
           `
         });
-      res
+        return res
         .status(200)
         .json({
           success: true,
@@ -201,19 +201,19 @@ exports.postSignIn = async (req, res, next) => {
       console.log("->", findStudent);
       SignUp.findByIdAndUpdate(findStudent._id, { lastLogin: new Date() }).then(
         (r) => {
-          res.json({ token, id: findStudent._id });
+          return res.json({ token, id: findStudent._id });
         }
       );
     } else {
-      res.status(400).send("Login credentials invalid..");
+      return res.status(400).send("Login credentials invalid..");
     }
   } catch (e) {
-    res.status(400).send(e);
+    return res.status(400).send(e);
   }
 };
 exports.getSignIn = async (req, res, next) => {
   const findStudent = await SignUp.find();
-  res.send(findStudent);
+  return res.send(findStudent);
 };
 exports.getUser = async (req, res, next) => {
   try {
@@ -222,15 +222,15 @@ exports.getUser = async (req, res, next) => {
     const id = req.body.id;
     const findUser = await SignUp.findById(id);
     if (findUser) {
-      res.status(200).send(findUser);
+      return res.status(200).send(findUser);
     } else {
-      res.status(404).json({
+      return res.status(404).json({
         type: "Authentication",
         msg: "Invalid user request !",
         success: false,
       });
     }
   } catch (e) {
-    res.status(400).send(e);
+    return res.status(400).send(e);
   }
 };

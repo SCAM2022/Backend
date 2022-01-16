@@ -52,14 +52,14 @@ exports.uploadImages = async(req,res,next)=>{
         re.images=l;
         re.save()
         .then(r=>{
-            res.status(200).json({msg:"image uploaded successfully !!"})
+            return res.status(200).json({msg:"image uploaded successfully !!"})
         })
         .catch(e=>{
-            res.status(400).json({msg:"image couldn't uploaded  !!"})
+            return res.status(400).json({msg:"image couldn't uploaded  !!"})
         })
     })
     .catch(e=>{
-        res.status(400).json({msg:"image couldn't uploaded  !!"})
+        return res.status(400).json({msg:"image couldn't uploaded  !!"})
     })
 }
 exports.fetchClubAchievements = async(req,res,next)=>{
@@ -69,12 +69,12 @@ exports.fetchClubAchievements = async(req,res,next)=>{
    const achv = await achievements.findOne({clubName});
    if(achv){
     const baseDir = path.join(__dirname, "..");
-    res.status(200).json({
+    return res.status(200).json({
         achv,baseDir
     })
    }
    else{
-    res.status(404).json({msg:"club not found"})
+    return res.status(404).json({msg:"club not found"})
 
    }
 }
