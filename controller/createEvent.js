@@ -1,34 +1,19 @@
-const Event = require('../models/createEvent');
-const nodemailer = require('nodemailer');
-const sendgridTransport = require('nodemailer-sendgrid-transport');
-const User = require('../models/auth')
-const ParticipationList = require('../models/EventParticipationList')
+const Event = require("../models/createEvent");
+const nodemailer = require("nodemailer");
+const sendgridTransport = require("nodemailer-sendgrid-transport");
+const User = require("../models/auth");
+const ParticipationList = require("../models/EventParticipationList");
 const transporter = nodemailer.createTransport(
   sendgridTransport({
     auth: {
       api_key:
-        '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'
-    }
+        "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",
+    },
   })
 );
 
-exports.postCreateEvent = async(req,res,next) => {
-    //console.log(req.body);
-  
-    const obj = JSON.parse(JSON.stringify(req.body));
-    console.log(obj);
-    const title = obj.title;
-    const discription = obj.discription;
-    const startDate = obj.startDate;
-    const endDate = obj.endDate;
-    const startTime = obj.startTime;
-    const location = obj.location;
-    const incharge = obj.incharge;
-    const clubName = obj.clubName;
-    const goodies = obj.goodies;
-    const eliCriteria = obj.eliCriteria;
-    const timeDuration = obj.timeDuration;
-    const rules = obj.rules;
+exports.postCreateEvent = async (req, res, next) => {
+  //console.log(req.body);
 
     const user = new Event({
         title: title,

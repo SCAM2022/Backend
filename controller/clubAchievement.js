@@ -1,30 +1,28 @@
-
-const achievements = require('../models/clubAchievements');
-const User = require('../models/auth')
-const express = require('express');
-const fs = require('fs')
+const achievements = require("../models/clubAchievements");
+const User = require("../models/auth");
+const express = require("express");
+const fs = require("fs");
 const app = express();
-const authController = require('../controller/createClub');
-const multer = require('multer');
-const { append } = require('express/lib/response');
+const authController = require("../controller/createClub");
+const multer = require("multer");
+const { append } = require("express/lib/response");
 const router = express.Router();
 
+const path = require("path");
 
-const path = require('path');
-
-app.set('views',path.join(__dirname,'views'));
-app.use(express.static(`${__dirname}/public`))
-
+app.set("views", path.join(__dirname, "views"));
+app.use(express.static(`${__dirname}/public`));
+app.get(express.static(path.join(__dirname, "public")));
 
 const fileStorage = multer.diskStorage({
-    destination:(req,file,cb)=>{
-        cb(null,'./public/achievements');
-    },
-    filename:(req,file,cb)=>{
-        const ext = file.mimetype.split("/")[1];
-        cb(null,file.originalname+`_${Date.now()}.${ext}`);
-    }
-})
+  destination: (req, file, cb) => {
+    cb(null, "./public/achievements");
+  },
+  filename: (req, file, cb) => {
+    const ext = file.mimetype.split("/")[1];
+    cb(null, file.originalname + `_${Date.now()}.${ext}`);
+  },
+});
 
 // const multerFilter = (req,file,cb)=>{
 //     if(file.mimetype.split("/")[1]==="pdf"){
@@ -34,8 +32,8 @@ const fileStorage = multer.diskStorage({
 //     }
 // }
 exports.uploadImg = multer({
-    storage:fileStorage,
-    // fileFilter:multerFilter
+  storage: fileStorage,
+  // fileFilter:multerFilter
 });
 
 exports.uploadImages = async(req,res,next)=>{
@@ -61,13 +59,16 @@ exports.uploadImages = async(req,res,next)=>{
     .catch(e=>{
         return res.status(400).json({msg:"image couldn't uploaded  !!"})
     })
-}
-exports.fetchClubAchievements = async(req,res,next)=>{
-    // console.log(req.file)
-    const obj = JSON.parse(JSON.stringify(req.body));
-    const clubName = obj.clubName;
-   const achv = await achievements.findOne({clubName});
-   if(achv){
+    .catch((e) => {
+      res.status(400).json({ msg: "image couldn't uploaded  !!" });
+    });
+};
+exports.fetchClubAchievements = async (req, res, next) => {
+  // console.log(req.file)
+  const obj = JSON.parse(JSON.stringify(req.body));
+  const clubName = obj.clubName;
+  const achv = await achievements.findOne({ clubName });
+  if (achv) {
     const baseDir = path.join(__dirname, "..");
     return res.status(200).json({
         achv,baseDir
