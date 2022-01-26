@@ -325,68 +325,79 @@ exports.postDeleteClub = async (req, res, next) => {
   }
 };
 
-exports.chats = async (req, res, next) => {
+exports.chat = async (req, res, next) => {
   const obj = JSON.parse(JSON.stringify(req.body));
   const clubName = obj.clubName;
-  const memberId = obj.memberId;
-  const msg = obj.msg;
-  const member = await User.findById(memberId);
   const chat = await Chat.findOne({ clubName: clubName });
-  if (chat && this.getMemberList) {
-    const li = chat.chats;
-    li.push({
-      memberId: memberId,
-      msg: msg,
-      memberName: member.name,
-    });
-    chat.chats = li;
-    chat
-      .save()
-      .then((re) => {
-        return res.status(200).json({ msg: "message sent successfully!" });
-      })
-      .catch((err) => {
-        return res.status(400).json({ msg: "message not sent !" });
-      });
-  } else {
-    return res.status(404).json({ msg: "Club not found !" });
-  }
-};
-exports.editMsg = async (req, res, next) => {
-  const obj = JSON.parse(JSON.stringify(req.body));
-  const clubName = obj.clubName;
-  const msgId = obj.msgId;
-  const memberId = obj.memberId;
-  const msg = obj.msg;
-  const member = await User.findById(memberId);
-  const chat = await Chat.findOne({ clubName: clubName });
-  if (chat && member) {
-    const li = chat.chats;
-    li.map((val) => {
-      if (val._id == msgId) {
-        (val.msg = msg),
-          (val.memberId = memberId),
-          (val.memberName = member.name);
-      }
-    });
-    chat
-      .save()
-      .then((re) => {
-        return res.status(200).json({ msg: "message edited successfully!" });
-      })
-      .catch((err) => {
-        return res.status(400).json({ msg: " couldn't edit message !" });
-      });
+  if (chat) {
+    return res.status(200).send(chat);
   } else {
     return res.status(404).json({ msg: "Club not found !" });
   }
 };
 
+// exports.chats = async (req, res, next) => {
+//   const obj = JSON.parse(JSON.stringify(req.body));
+//   const clubName = obj.clubName;
+//   const memberId = obj.memberId;
+//   const msg = obj.msg;
+//   const member = await User.findById(memberId);
+//   const chat = await Chat.findOne({ clubName: clubName });
+//   if (chat && this.getMemberList) {
+//     const li = chat.chats;
+//     li.push({
+//       userId: memberId,
+//       message: msg,
+//       sender: member.name,
+//     });
+//     chat.chats = li;
+//     chat
+//       .save()
+//       .then((re) => {
+//         return res.status(200).json({ msg: "message sent successfully!" });
+//       })
+//       .catch((err) => {
+//         return res.status(400).json({ msg: "message not sent !" });
+//       });
+//   } else {
+//     return res.status(404).json({ msg: "Club not found !" });
+//   }
+// };
+// exports.editMsg = async (req, res, next) => {
+//   const obj = JSON.parse(JSON.stringify(req.body));
+//   const clubName = obj.clubName;
+//   const msgId = obj.msgId;
+//   const memberId = obj.memberId;
+//   const msg = obj.msg;
+//   const member = await User.findById(memberId);
+//   const chat = await Chat.findOne({ clubName: clubName });
+//   if (chat && member) {
+//     const li = chat.chats;
+//     li.map((val) => {
+//       if (val._id == msgId) {
+//         (val.msg = msg),
+//           (val.memberId = memberId),
+//           (val.memberName = member.name);
+//       }
+//     });
+//     chat
+//       .save()
+//       .then((re) => {
+//         return res.status(200).json({ msg: "message edited successfully!" });
+//       })
+//       .catch((err) => {
+//         return res.status(400).json({ msg: " couldn't edit message !" });
+//       });
+//   } else {
+//     return res.status(404).json({ msg: "Club not found !" });
+//   }
+// };
+
 exports.deleteMsg = async (req, res, next) => {
   const obj = JSON.parse(JSON.stringify(req.body));
   const clubName = obj.clubName;
   const msgId = obj.msgId;
-  const memberId = obj.memberId;
+  const memberId = obj.userId;
   const club = await list.findOne({ clubName });
   // console.log(club);
   const chat = await Chat.findOne({ clubName: clubName });

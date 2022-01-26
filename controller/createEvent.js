@@ -179,40 +179,44 @@ exports.fetchParticipationList = async (req, res, next) => {
   }
 };
 exports.addEventsToProfile = async (req, res, next) => {
-  const obj = JSON.parse(JSON.stringify(req.body));
-  const date = obj.date;
-  const eventId = obj.eventId;
-  const eventName = obj.eventName;
-  const list = obj.participatedStudents;
-  console.log(obj);
-  list.map(async (val) => {
-    const user = await User.findById(val.memberId);
-    const event = await Event.findById(eventId);
-    console.log("event->", event);
-    const list2 = await ParticipationList.findOne({ eventName: event.title });
-    if (user) {
-      list2.participatedStudents = obj.participatedStudents;
-      list2.save().then((re) => {
-        console.log("done!!");
-      });
-      if (val.isAttend) {
-        const l = user.attendedEvents;
-        l.push({
-          date: date,
-          eventId: eventId,
-          eventName: eventName,
+  try {
+    const obj = JSON.parse(JSON.stringify(req.body));
+    const date = obj.date;
+    const eventId = obj.eventId;
+    const eventName = obj.eventName;
+    const list = obj.participatedStudents;
+    console.log(obj);
+    list.map(async (val) => {
+      const user = await User.findById(val.memberId);
+      const event = await Event.findById(eventId);
+      console.log("event->", event);
+      const list2 = await ParticipationList.findOne({ eventName: event.title });
+      if (user) {
+        list2.participatedStudents = obj.participatedStudents;
+        list2.save().then((re) => {
+          console.log("done!!");
         });
-        user.attendedEvents = l;
+        if (val.isAttend) {
+          const l = user.attendedEvents;
+          l.push({
+            date: date,
+            eventId: eventId,
+            eventName: eventName,
+          });
+          user.attendedEvents = l;
+        }
+        user
+          .save()
+          .then((re) => {
+            console.log("done1");
+          })
+          .catch((err) => {
+            return res.status(404).json({ msg: "User not found !!!" });
+          });
       }
-      user
-        .save()
-        .then((re) => {
-          clg("done");
-        })
-        .catch((err) => {
-          return res.status(404).json({ msg: "User not found !!!" });
-        });
-    }
-  });
-  return res.status(200).send("OK");
+    });
+    return res.status(200).send("OK");
+  } catch {
+    console.log("error");
+  }
 };
