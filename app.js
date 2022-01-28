@@ -87,7 +87,7 @@ const saveToDB = async (data) => {
         userId: memberId,
         message: msg,
         sender: data.sender,
-        date: data?.date,
+        date: data.date,
       });
       chat.chats = li;
       chat
