@@ -9,7 +9,7 @@ const transporter = nodemailer.createTransport(
   sendgridTransport({
     auth: {
       api_key:
-        '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'
+      "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",
     }
   })
 );
@@ -221,8 +221,20 @@ exports.getUser = async (req, res, next) => {
     console.log(obj);
     const id = req.body.id;
     const findUser = await SignUp.findById(id);
+    const arr=[];
+    const counts = {};
     if (findUser) {
-      return res.status(200).send(findUser);
+      // const DATE = new Date(findUser.attendedEvents[0].date).getDate();
+      // console.log(DATE);
+      findUser.attendedEvents.map(ele =>{
+        arr.push(ele.date.split('T')[0]);
+      })
+      arr.forEach((x) => {
+        counts[x] = (counts[x] || 0) + 1;
+      });
+      return res.status(200).send({
+        user: findUser,
+        count: counts});
     } else {
       return res.status(404).json({
         type: "Authentication",

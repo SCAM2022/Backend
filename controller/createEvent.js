@@ -7,13 +7,26 @@ const transporter = nodemailer.createTransport(
   sendgridTransport({
     auth: {
       api_key:
-        "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",
+        "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",
     },
   })
 );
 
 exports.postCreateEvent = async (req, res, next) => {
   //console.log(req.body);
+  const obj = JSON.parse(JSON.stringify(req.body));
+  const title = obj.title;
+  const discription = obj.discription;
+  const startDate = obj.startDate;
+  const endDate = obj.endDate;
+  const startTime = obj.startTime;
+  const location = obj.location;
+  const incharge = obj.incharge;
+  const clubName = obj.clubName;
+  const goodies = obj.goodies;
+  const eliCriteria = obj.eliCriteria;
+  const timeDuration = obj.timeDuration;
+  const rules = obj.rules;
 
     const user = new Event({
         title: title,
@@ -100,12 +113,14 @@ exports.setReminder = async(req,res,next) =>{
     const eveTime = date.getTime() / 1000;
     const currentDateTime = new Date();
     const currInSeconds=currentDateTime.getTime() / 1000;
-    const timeOutTime = eveTime - currInSeconds;
+    const timeOutTime = (Math.trunc(eveTime - currInSeconds)-5)*1000;
+
+    console.log(timeOutTime);
     setTimeout(() => {
         transporter.sendMail({
             to: email,
             from: 'sahilmohammad532@gmail.com',
-            subject: 'Signed Up',
+            subject: 'Event Reminder',
             html: `
               <p>Hello ${userName}</p>
               <p>${eveName} is going to start at ${dateInString}</p>
