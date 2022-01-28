@@ -15,6 +15,10 @@ const transporter = nodemailer.createTransport(
 exports.postCreateEvent = async (req, res, next) => {
   //console.log(req.body);
   const obj = JSON.parse(JSON.stringify(req.body));
+<<<<<<< HEAD
+=======
+  console.log(obj);
+>>>>>>> fda564ee96459a28d72a42a0a23a4ec96a923f0c
   const title = obj.title;
   const discription = obj.discription;
   const startDate = obj.startDate;
@@ -27,6 +31,7 @@ exports.postCreateEvent = async (req, res, next) => {
   const eliCriteria = obj.eliCriteria;
   const timeDuration = obj.timeDuration;
   const rules = obj.rules;
+<<<<<<< HEAD
 
     const user = new Event({
         title: title,
@@ -41,31 +46,46 @@ exports.postCreateEvent = async (req, res, next) => {
         location:location,
         eventIncharge:incharge,
         createdBy:clubName,
+=======
+  const user = new Event({
+    title: title,
+    discription: discription,
+    timeDuration: timeDuration,
+    goodies: goodies,
+    eliCriteria: eliCriteria,
+    rules: rules,
+    startDate: startDate,
+    endDate: endDate,
+    startTime: startTime,
+    location: location,
+    eventIncharge: incharge,
+    createdBy: clubName,
+  });
+  user
+    .save()
+    .then((result) => {
+      const participationList = new ParticipationList({
+        eventName: title,
+        participatedStudents: [],
+      });
+      participationList.save().then((re) => {
+        console.log("Event created successfully!");
+        return res.status(200).json({
+          success: true,
+          msg: "Event created successfully!",
+        });
+      });
+>>>>>>> fda564ee96459a28d72a42a0a23a4ec96a923f0c
     })
-    user.save()
-        .then(result =>{
-            const participationList = new ParticipationList({
-                eventName:title,
-                participatedStudents:[]
-            })
-            participationList.save()
-            .then(re=>{
-                console.log('Event created successfully!');
-                return res.status(200).json({
-                    success:true,
-                    msg:"Event created successfully!"
-                });
-            })
-            
-        })
-        .catch(err =>{
-            console.log(err);
-        })
-}
-exports.fetchSingleEvent = async(req,res,next) =>{
-    const obj = JSON.parse(JSON.stringify(req.body))
-    const eveName = obj.eveName;
+    .catch((err) => {
+      console.log(err);
+    });
+};
+exports.fetchSingleEvent = async (req, res, next) => {
+  const obj = JSON.parse(JSON.stringify(req.body));
+  const eveName = obj.eveName;
 
+<<<<<<< HEAD
     const eveInfo = await Event.find({title: eveName});
       if(!eveInfo){
           return res.json({
@@ -122,102 +142,160 @@ exports.setReminder = async(req,res,next) =>{
             from: 'sahilmohammad532@gmail.com',
             subject: 'Event Reminder',
             html: `
+=======
+  const eveInfo = await Event.find({ title: eveName });
+  if (!eveInfo) {
+    return res.json({
+      message: "Event Doesnt Exist !",
+    });
+  }
+  return res.json({
+    eveInfo,
+  });
+};
+exports.postFetchEvents = async (req, res, next) => {
+  //console.log(req. body);
+
+  const events = await Event.find();
+  // user.save()
+  //     .then(result =>{
+  // console.log('Event created successfully!');
+  // res.status(200).json({
+  //     events
+  // }).redirect('/');
+
+  //     })
+  //     .catch(err =>{
+  //         console.log(err);
+  //     })
+  if (events.length > 0) {
+    console.log("Event find successfully!");
+    return res.status(200).json({
+      events,
+    });
+  } else {
+    return res.status(400).json({
+      success: false,
+      msg: "Couldn't find event!",
+    });
+  }
+};
+exports.setReminder = async (req, res, next) => {
+  const obj = JSON.parse(JSON.stringify(req.body));
+  const userName = obj.name;
+  const eveName = obj.eveName;
+  const dateInString = obj.date;
+  const email = obj.email;
+  const date = new Date(dateInString);
+  const eveTime = date.getTime() / 1000;
+  const currentDateTime = new Date();
+  const currInSeconds = currentDateTime.getTime() / 1000;
+  const timeOutTime = eveTime - currInSeconds;
+  setTimeout(() => {
+    transporter.sendMail({
+      to: email,
+      from: "sahilmohammad532@gmail.com",
+      subject: "Signed Up",
+      html: `
+>>>>>>> fda564ee96459a28d72a42a0a23a4ec96a923f0c
               <p>Hello ${userName}</p>
               <p>${eveName} is going to start at ${dateInString}</p>
-            `
+            `,
+    });
+  }, timeOutTime);
+  return res.send("OK");
+};
+exports.participationList = async (req, res, next) => {
+  const obj = JSON.parse(JSON.stringify(req.body));
+  const userId = obj.userId;
+  const eventId = obj.eveId;
+  const user = await User.findById(userId);
+  const event = await Event.findById(eventId);
+  if (user && event) {
+    ParticipationList.findOne({ eventName: event.title })
+      .then((re) => {
+        const li = re.participatedStudents;
+        li.push({
+          name: user.name,
+          memberId: userId,
+          branch: user.department,
+          roll: user.rollno,
+          email: user.email,
+        });
+        re.participatedStudents = li;
+        re.save()
+          .then((data) => {
+            const pi = user.participatedEvents;
+            pi.push({
+              eventId: eventId,
+              eventName: event.title,
+            });
+            user.participatedEvents = pi;
+            user.save().then((se) => {
+              return res.send("OK");
+            });
+          })
+          .catch((err) => {
+            console.log(err);
           });
-    },timeOutTime);
-    return res.send('OK')
-}
-exports.participationList = async(req,res,next) =>{
-    const obj = JSON.parse(JSON.stringify(req.body));
-    const userId = obj.userId;
-    const eventId = obj.eveId;
-    const user = await User.findById(userId);
-    const event = await Event.findById(eventId);
-    if(user&&event){
-        ParticipationList.findOne({eventName:event.title})
-        .then(re=>{
-           const li = re.participatedStudents;
-           li.push({
-               name:user.name,
-               memberId:userId,
-               branch:user.department,
-               roll:user.rollno,
-               email:user.email
-           })
-           re.participatedStudents = li;
-           re.save()
-           .then(data=>{
-                const pi = user.participatedEvents;
-                pi.push({
-                    eventId:eventId,
-                    eventName:event.title
-                })
-                user.participatedEvents=pi;
-                user.save()
-                .then(se=>{
-                    return res.send('OK')
-                })
-               
-           }).catch(err=>{
-               console.log(err)
-           })
-        })
-        .catch(err=>{
-            return res.status(404).json({msg:"Event not found !!!"})
-        })
-    }
-    else{
-        return res.status(404).json({msg:"Event not found !!!"})
-    }
-
-}
-exports.fetchParticipationList = async(req,res,next)=>{
-    const obj = JSON.parse(JSON.stringify(req.body));
-    const eventId = obj.eveId;
-    const event = await Event.findById(eventId);
-    const list = await ParticipationList.findOne({eventName:event.title});
-    if(list){
-       return res.status(200).json(list);
-    }else{
-        return res.status(404).json({msg:"Event not found !!!"});
-    }
-}
-exports.addEventsToProfile = async(req,res,next)=>{
+      })
+      .catch((err) => {
+        return res.status(404).json({ msg: "Event not found !!!" });
+      });
+  } else {
+    return res.status(404).json({ msg: "Event not found !!!" });
+  }
+};
+exports.fetchParticipationList = async (req, res, next) => {
+  const obj = JSON.parse(JSON.stringify(req.body));
+  const eventId = obj.eveId;
+  const event = await Event.findById(eventId);
+  const list = await ParticipationList.findOne({ eventName: event.title });
+  if (list) {
+    return res.status(200).json(list);
+  } else {
+    return res.status(404).json({ msg: "Event not found !!!" });
+  }
+};
+exports.addEventsToProfile = async (req, res, next) => {
+  try {
     const obj = JSON.parse(JSON.stringify(req.body));
     const date = obj.date;
-    const eventId = obj._id;
+    const eventId = obj.eventId;
     const eventName = obj.eventName;
     const list = obj.participatedStudents;
-    // console.log(list)
-    list.map(async (val)=>{
-        const user = await User.findById(val.memberId);
-        const event = await Event.findById(eventId);
-        const list2 = await ParticipationList.findOne({eventName:event.title});
-        if(user){
-            list2.participatedStudents=obj.participatedStudents;
-            list2.save()
-            .then(re=>{
-                console.log('done!!');
-            })
-            if(val.isAttend){
-                const l = user.attendedEvents;
-                l.push({
-                    date:date,
-                    eventId:eventId,
-                    eventName:eventName
-                })
-                user.attendedEvents = l;
-            }
-        user.save()
-        .then(re=>{
-            clg('done')
-        }).catch(err=>{
-           return  res.status(404).json({msg:"User not found !!!"});
-        })
+    console.log(obj);
+    list.map(async (val) => {
+      const user = await User.findById(val.memberId);
+      const event = await Event.findById(eventId);
+      console.log("event->", event);
+      const list2 = await ParticipationList.findOne({ eventName: event.title });
+      if (user) {
+        list2.participatedStudents = obj.participatedStudents;
+        list2.save().then((re) => {
+          console.log("done!!");
+        });
+        if (val.isAttend) {
+          const l = user.attendedEvents;
+          l.push({
+            date: date,
+            eventId: eventId,
+            eventName: eventName,
+          });
+          user.attendedEvents = l;
         }
-     
-    })
-   return res.status(200).send("OK");
-}
+        user
+          .save()
+          .then((re) => {
+            console.log("done1");
+          })
+          .catch((err) => {
+            return res.status(404).json({ msg: "User not found !!!" });
+          });
+      }
+    });
+    return res.status(200).send("OK");
+  } catch {
+    console.log("error");
+  }
+};

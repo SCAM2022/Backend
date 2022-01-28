@@ -36,46 +36,46 @@ exports.uploadImg = multer({
   // fileFilter:multerFilter
 });
 
-exports.uploadImages = async(req,res,next)=>{
-    // console.log(req.file)
-    const obj = JSON.parse(JSON.stringify(req.body));
-    const clubName = obj.clubName;
-    const img = req.file.path;
-    achievements.findOne({clubName})
-    .then(re=>{
-        const l  = re.images;
-        l.push({
-            imgpath:img
+exports.uploadImages = async (req, res, next) => {
+  const obj = JSON.parse(JSON.stringify(req.body));
+  const clubName = obj.clubName;
+  const img = req.file.path;
+  achievements
+    .findOne({ clubName })
+    .then((re) => {
+      const l = re.images;
+      l.push({
+        imgpath: img,
+      });
+      re.images = l;
+      re.save()
+        .then((r) => {
+          return res
+            .status(200)
+            .json({ msg: "image uploaded successfully !!" });
         })
-        re.images=l;
-        re.save()
-        .then(r=>{
-            return res.status(200).json({msg:"image uploaded successfully !!"})
-        })
-        .catch(e=>{
-            return res.status(400).json({msg:"image couldn't uploaded  !!"})
-        })
+        .catch((e) => {
+          return res.status(400).json({ msg: "image couldn't uploaded  !!" });
+        });
     })
-    .catch(e=>{
-        return res.status(400).json({msg:"image couldn't uploaded  !!"})
+    .catch((e) => {
+      return res.status(400).json({ msg: "image couldn't uploaded  !!" });
     })
     .catch((e) => {
       res.status(400).json({ msg: "image couldn't uploaded  !!" });
     });
 };
 exports.fetchClubAchievements = async (req, res, next) => {
-  // console.log(req.file)
   const obj = JSON.parse(JSON.stringify(req.body));
   const clubName = obj.clubName;
   const achv = await achievements.findOne({ clubName });
   if (achv) {
     const baseDir = path.join(__dirname, "..");
     return res.status(200).json({
-        achv,baseDir
-    })
-   }
-   else{
-    return res.status(404).json({msg:"club not found"})
-
-   }
-}
+      achv,
+      baseDir,
+    });
+  } else {
+    return res.status(404).json({ msg: "club not found" });
+  }
+};

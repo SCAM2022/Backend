@@ -1,21 +1,26 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
 const testomonial = new Schema({
-    clubName:{
+  clubName: {
+    type: String,
+  },
+  chats: [
+    {
+      message: {
         type: String,
+      },
+      userId: {
+        type: String,
+      },
+      sender: {
+        type: String,
+      },
+      time: {
+        type: Date,
+      },
     },
-    chats: [{
-        msg:{
-            type: String,
-        },
-        memberId:{
-            type: String,
-        },
-        memberName:{
-            type: String,
-        },
-    }],
-    });
-module.exports = mongoose.model('testomonial',testomonial);
+  ],
+});
+module.exports = mongoose.model("testomonial", testomonial);
