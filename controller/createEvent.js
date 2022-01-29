@@ -28,84 +28,83 @@ exports.postCreateEvent = async (req, res, next) => {
   const timeDuration = obj.timeDuration;
   const rules = obj.rules;
 
-    const user = new Event({
-        title: title,
-        discription: discription,
-        timeDuration: timeDuration,
-        goodies: goodies,
-        eliCriteria: eliCriteria,
-        rules: rules,
-       startDate:startDate,
-        endDate: endDate,
-        startTime:startTime,
-        location:location,
-        eventIncharge:incharge,
-        createdBy:clubName,
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+  const user = new Event({
+    title: title,
+    discription: discription,
+    timeDuration: timeDuration,
+    goodies: goodies,
+    eliCriteria: eliCriteria,
+    rules: rules,
+    startDate: startDate,
+    endDate: endDate,
+    startTime: startTime,
+    location: location,
+    eventIncharge: incharge,
+    createdBy: clubName,
+  }).catch((err) => {
+    console.log(err);
+  });
 };
 exports.fetchSingleEvent = async (req, res, next) => {
   const obj = JSON.parse(JSON.stringify(req.body));
   const eveName = obj.eveName;
 
-    const eveInfo = await Event.find({title: eveName});
-      if(!eveInfo){
-          return res.json({
-              message: 'Event Doesnt Exist !'
-          })
-      }
-      return res.json({
-        eveInfo
-    })
-}
-exports.postFetchEvents = async(req,res,next) => {
-    //console.log(req. body);
-    
-    const events =  await Event.find();
-    // user.save()
-    //     .then(result =>{
-            // console.log('Event created successfully!');
-            // res.status(200).json({
-            //     events
-            // }).redirect('/');
-            
-    //     })
-    //     .catch(err =>{
-    //         console.log(err);
-    //     })
-    if(events.length>0){
-        console.log('Event find successfully!');
-        return res.status(200).json({
-            events
-        })
-    }else{
-        return res.status(400).json({
-            success:false,
-            msg:"Couldn't find event!"
-        })
-    }
-}
-exports.setReminder = async(req,res,next) =>{
-    const obj = JSON.parse(JSON.stringify(req.body));
-    const userName = obj.name;
-    const eveName = obj.eveName;
-    const dateInString = obj.date;
-    const email = obj.email
-    const date = new Date(dateInString);
-    const eveTime = date.getTime() / 1000;
-    const currentDateTime = new Date();
-    const currInSeconds=currentDateTime.getTime() / 1000;
-    const timeOutTime = (Math.trunc(eveTime - currInSeconds)-5)*1000;
+  const eveInfo = await Event.find({ title: eveName });
+  if (!eveInfo) {
+    return res.json({
+      message: "Event Doesnt Exist !",
+    });
+  }
+  return res.json({
+    eveInfo,
+  });
+};
+exports.postFetchEvents = async (req, res, next) => {
+  //console.log(req. body);
 
-    console.log(timeOutTime);
-    setTimeout(() => {
-        transporter.sendMail({
-            to: email,
-            from: 'sahilmohammad532@gmail.com',
-            subject: 'Event Reminder',
-            html: `
+  const events = await Event.find();
+  // user.save()
+  //     .then(result =>{
+  // console.log('Event created successfully!');
+  // res.status(200).json({
+  //     events
+  // }).redirect('/');
+
+  //     })
+  //     .catch(err =>{
+  //         console.log(err);
+  //     })
+  if (events.length > 0) {
+    console.log("Event find successfully!");
+    return res.status(200).json({
+      events,
+    });
+  } else {
+    return res.status(400).json({
+      success: false,
+      msg: "Couldn't find event!",
+    });
+  }
+};
+exports.setReminder = async (req, res, next) => {
+  const obj = JSON.parse(JSON.stringify(req.body));
+  const userName = obj.name;
+  const eveName = obj.eveName;
+  const dateInString = obj.date;
+  const email = obj.email;
+  const date = new Date(dateInString);
+  const eveTime = date.getTime() / 1000;
+  const currentDateTime = new Date();
+  const currInSeconds = currentDateTime.getTime() / 1000;
+  const timeOutTime = (Math.trunc(eveTime - currInSeconds) - 5) * 1000;
+
+  console.log(timeOutTime);
+  setTimeout(() => {
+    transporter.sendMail({
+      to: email,
+      from: "sahilmohammad532@gmail.com",
+      subject: "Event Reminder",
+      html: `
               <p>Hello ${userName}</p>
               <p>${eveName} is going to start at ${dateInString}</p>
             `,
@@ -176,7 +175,6 @@ exports.addEventsToProfile = async (req, res, next) => {
     list.map(async (val) => {
       const user = await User.findById(val.memberId);
       const event = await Event.findById(eventId);
-      console.log("event->", event);
       const list2 = await ParticipationList.findOne({ eventName: event.title });
       if (user) {
         list2.participatedStudents = obj.participatedStudents;
