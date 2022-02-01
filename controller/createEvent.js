@@ -3,6 +3,7 @@ const nodemailer = require("nodemailer");
 const sendgridTransport = require("nodemailer-sendgrid-transport");
 const User = require("../models/auth");
 const ParticipationList = require("../models/EventParticipationList");
+const { translateAliases } = require("../models/createEvent");
 const transporter = nodemailer.createTransport(
   sendgridTransport({
     auth: {
@@ -14,6 +15,7 @@ const transporter = nodemailer.createTransport(
 
 exports.postCreateEvent = async (req, res, next) => {
   //console.log(req.body);
+try {
   const obj = JSON.parse(JSON.stringify(req.body));
   const title = obj.title;
   const discription = obj.discription;
@@ -45,8 +47,12 @@ exports.postCreateEvent = async (req, res, next) => {
     .catch((err) => {
       console.log(err);
     });
+} catch (error) {
+  return res.status(400).send(error);
+}
 };
 exports.fetchSingleEvent = async (req, res, next) => {
+ try {
   const obj = JSON.parse(JSON.stringify(req.body));
   const eveName = obj.eveName;
 
@@ -59,9 +65,14 @@ exports.fetchSingleEvent = async (req, res, next) => {
       return res.json({
         eveInfo
     })
+ } catch (error) {
+     return res.status(400).send(error);
+
+ }
 }
 exports.postFetchEvents = async(req,res,next) => {
-    //console.log(req. body);
+   try {
+      //console.log(req. body);
     
     const events =  await Event.find();
     // user.save()
@@ -86,8 +97,13 @@ exports.postFetchEvents = async(req,res,next) => {
             msg:"Couldn't find event!"
         })
     }
+   } catch (error) {
+       return res.status(400).send(error);
+
+   }
 }
 exports.setReminder = async(req,res,next) =>{
+  try {
     const obj = JSON.parse(JSON.stringify(req.body));
     const userName = obj.name;
     const eveName = obj.eveName;
@@ -112,8 +128,13 @@ exports.setReminder = async(req,res,next) =>{
     });
   }, timeOutTime);
   return res.send("OK");
+  } catch (error) {
+      return res.status(400).send(error);
+
+  }
 };
 exports.participationList = async (req, res, next) => {
+try {
   const obj = JSON.parse(JSON.stringify(req.body));
   const userId = obj.userId;
   const eventId = obj.eveId;
@@ -153,8 +174,13 @@ exports.participationList = async (req, res, next) => {
   } else {
     return res.status(404).json({ msg: "Event not found !!!" });
   }
+} catch (error) {
+    return res.status(400).send(error);
+
+}
 };
 exports.fetchParticipationList = async (req, res, next) => {
+try {
   const obj = JSON.parse(JSON.stringify(req.body));
   const eventId = obj.eveId;
   const event = await Event.findById(eventId);
@@ -164,6 +190,10 @@ exports.fetchParticipationList = async (req, res, next) => {
   } else {
     return res.status(404).json({ msg: "Event not found !!!" });
   }
+} catch (error) {
+    return res.status(400).send(error);
+
+}
 };
 exports.addEventsToProfile = async (req, res, next) => {
   try {

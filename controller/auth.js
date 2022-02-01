@@ -81,6 +81,7 @@ exports.postCheckRoll = async (req, res, next) => {
 exports.postSignUp = async (req, res, next) => {
   //console.log(req. body);
 
+try {
   const obj = JSON.parse(JSON.stringify(req.body));
   console.log(obj);
   const name = obj.person;
@@ -130,11 +131,16 @@ exports.postSignUp = async (req, res, next) => {
     .catch((err) => {
       console.log(err);
     });
+} catch (error) {
+  return res.status(400).send(error);
+
+}
 };
 
 exports.updateProfile = async (req, res, next) => {
   //console.log(req. body);
-
+try {
+  
   const obj = JSON.parse(JSON.stringify(req.body));
   console.log("update->", obj);
   const name = obj.person;
@@ -174,6 +180,10 @@ exports.updateProfile = async (req, res, next) => {
   } else {
     return res.status(400).send("User details couldn't update..");
   }
+} catch (error) {
+  return res.status(400).send(error);
+
+}
 };
 
 exports.getSignUp = (req, res, next) => {

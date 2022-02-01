@@ -37,7 +37,8 @@ exports.uploadImg = multer({
 });
 
 exports.uploadImages = async (req, res, next) => {
-  const obj = JSON.parse(JSON.stringify(req.body));
+  try {
+    const obj = JSON.parse(JSON.stringify(req.body));
   const clubName = obj.clubName;
   const img = req.file.path;
   achievements
@@ -64,8 +65,13 @@ exports.uploadImages = async (req, res, next) => {
     .catch((e) => {
       res.status(400).json({ msg: "image couldn't uploaded  !!" });
     });
+  } catch (error) {
+    return res.status(400).send(error);
+
+  }
 };
 exports.fetchClubAchievements = async (req, res, next) => {
+ try {
   const obj = JSON.parse(JSON.stringify(req.body));
   const clubName = obj.clubName;
   const achv = await achievements.findOne({ clubName });
@@ -78,4 +84,7 @@ exports.fetchClubAchievements = async (req, res, next) => {
   } else {
     return res.status(404).json({ msg: "club not found" });
   }
+ } catch (error) {
+  return res.status(400).send(error);
+ }
 };

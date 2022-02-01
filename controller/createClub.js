@@ -187,6 +187,7 @@ exports.findClub = async (req, res, next) => {
   }
 };
 exports.joinClub = async (req, res, next) => {
+try {
   const obj = JSON.parse(JSON.stringify(req.body));
   const clubName = obj.clubName;
   const name = obj.name;
@@ -226,9 +227,13 @@ exports.joinClub = async (req, res, next) => {
       });
     });
   });
+} catch (error) {
+  return res.status(400).send(error);
+}
 };
 exports.leftClub = async (req, res, next) => {
-  const obj = JSON.parse(JSON.stringify(req.body));
+  try {
+    const obj = JSON.parse(JSON.stringify(req.body));
   const clubName = obj.clubName;
   const id = obj.id;
 
@@ -267,8 +272,12 @@ exports.leftClub = async (req, res, next) => {
         return res.status(400).json({ msg: "Couldn't left club !" });
       });
   });
+  } catch (error) {
+    return res.status(400).send(error);
+  }
 };
 exports.postSingleClub = async (req, res, next) => {
+ try {
   const obj = JSON.parse(JSON.stringify(req.body));
   const clubName = obj.clubName;
   const club = await Club.findOne({ name: clubName });
@@ -278,8 +287,12 @@ exports.postSingleClub = async (req, res, next) => {
   } else {
     return res.status(400).json({ msg: "Couldn't find club !" });
   }
+ } catch (error) {
+  return res.status(400).send(error);
+ }
 };
 exports.getMemberList = async (req, res, next) => {
+ try {
   const obj = JSON.parse(JSON.stringify(req.body));
   const clubName = obj.clubName;
   const members = await list.find({ clubName: clubName });
@@ -288,8 +301,12 @@ exports.getMemberList = async (req, res, next) => {
   } else {
     return res.status(400).json({ msg: "Couldn't find club !" });
   }
+ } catch (error) {
+  return res.status(400).send(error);
+ }
 };
 exports.postDeleteClub = async (req, res, next) => {
+ try {
   const obj = JSON.parse(JSON.stringify(req.body));
   const clubName = obj.clubName;
   const club = await Club.findOneAndDelete({ name: clubName });
@@ -323,9 +340,13 @@ exports.postDeleteClub = async (req, res, next) => {
   } else {
     return res.status(400).json({ msg: "Couldn't delete club !" });
   }
+ } catch (error) {
+  return res.status(400).send(error);
+ }
 };
 
 exports.chat = async (req, res, next) => {
+ try {
   const obj = JSON.parse(JSON.stringify(req.body));
   const clubName = obj.clubName;
   const chat = await Chat.findOne({ clubName: clubName });
@@ -334,6 +355,9 @@ exports.chat = async (req, res, next) => {
   } else {
     return res.status(404).json({ msg: "Club not found !" });
   }
+ } catch (error) {
+  return res.status(400).send(error);
+ }
 };
 
 // exports.chats = async (req, res, next) => {
@@ -394,7 +418,8 @@ exports.chat = async (req, res, next) => {
 // };
 
 exports.deleteMsg = async (req, res, next) => {
-  const obj = JSON.parse(JSON.stringify(req.body));
+  try {
+    const obj = JSON.parse(JSON.stringify(req.body));
   const clubName = obj.clubName;
   const msgId = obj.msgId;
   const memberId = obj.userId;
@@ -434,6 +459,9 @@ exports.deleteMsg = async (req, res, next) => {
     }
   } else {
     return res.status(404).json({ msg: "Club not found !" });
+  }
+  } catch (error) {
+    return res.status(400).send(error);
   }
 };
 //module.exports=upload;
