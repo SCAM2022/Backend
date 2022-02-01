@@ -30,7 +30,6 @@ try {
   const timeDuration = obj.timeDuration;
   const rules = obj.rules;
 
-<<<<<<< HEAD
     const user = new Event({
         title: title,
         discription: discription,
@@ -51,31 +50,12 @@ try {
 } catch (error) {
   return res.status(400).send(error);
 }
-=======
-  const user = new Event({
-    title: title,
-    discription: discription,
-    timeDuration: timeDuration,
-    goodies: goodies,
-    eliCriteria: eliCriteria,
-    rules: rules,
-    startDate: startDate,
-    endDate: endDate,
-    startTime: startTime,
-    location: location,
-    eventIncharge: incharge,
-    createdBy: clubName,
-  }).catch((err) => {
-    console.log(err);
-  });
->>>>>>> db3806964457d41a12d0cfefa6c396917f292481
 };
 exports.fetchSingleEvent = async (req, res, next) => {
  try {
   const obj = JSON.parse(JSON.stringify(req.body));
   const eveName = obj.eveName;
 
-<<<<<<< HEAD
     const eveInfo = await Event.find({title: eveName});
       if(!eveInfo){
           return res.json({
@@ -134,56 +114,6 @@ exports.setReminder = async(req,res,next) =>{
     const currentDateTime = new Date();
     const currInSeconds=currentDateTime.getTime() / 1000;
     const timeOutTime = (Math.trunc(eveTime - currInSeconds)-5)*1000;
-=======
-  const eveInfo = await Event.find({ title: eveName });
-  if (!eveInfo) {
-    return res.json({
-      message: "Event Doesnt Exist !",
-    });
-  }
-  return res.json({
-    eveInfo,
-  });
-};
-exports.postFetchEvents = async (req, res, next) => {
-  //console.log(req. body);
-
-  const events = await Event.find();
-  // user.save()
-  //     .then(result =>{
-  // console.log('Event created successfully!');
-  // res.status(200).json({
-  //     events
-  // }).redirect('/');
-
-  //     })
-  //     .catch(err =>{
-  //         console.log(err);
-  //     })
-  if (events.length > 0) {
-    console.log("Event find successfully!");
-    return res.status(200).json({
-      events,
-    });
-  } else {
-    return res.status(400).json({
-      success: false,
-      msg: "Couldn't find event!",
-    });
-  }
-};
-exports.setReminder = async (req, res, next) => {
-  const obj = JSON.parse(JSON.stringify(req.body));
-  const userName = obj.name;
-  const eveName = obj.eveName;
-  const dateInString = obj.date;
-  const email = obj.email;
-  const date = new Date(dateInString);
-  const eveTime = date.getTime() / 1000;
-  const currentDateTime = new Date();
-  const currInSeconds = currentDateTime.getTime() / 1000;
-  const timeOutTime = (Math.trunc(eveTime - currInSeconds) - 5) * 1000;
->>>>>>> db3806964457d41a12d0cfefa6c396917f292481
 
   console.log(timeOutTime);
   setTimeout(() => {
