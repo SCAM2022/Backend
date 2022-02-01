@@ -44,9 +44,25 @@ try {
         eventIncharge:incharge,
         createdBy:clubName,
     })
+    user
+    .save()
+    .then((result) => {
+      const participationList = new ParticipationList({
+        eventName: title,
+        participatedStudents: [],
+      });
+      participationList.save().then((re) => {
+        console.log("Event created successfully!");
+        return res.status(200).json({
+          success: true,
+          msg: "Event created successfully!",
+        });
+      });
+    })
     .catch((err) => {
       console.log(err);
     });
+
 } catch (error) {
   return res.status(400).send(error);
 }
