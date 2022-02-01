@@ -2,15 +2,15 @@ const SignUp = require("../models/auth");
 const bcrypt = require("bcryptjs");
 const { validationResult } = require("express-validator");
 const jwt = require("jsonwebtoken");
-const nodemailer = require('nodemailer');
-const sendgridTransport = require('nodemailer-sendgrid-transport');
+const nodemailer = require("nodemailer");
+const sendgridTransport = require("nodemailer-sendgrid-transport");
 
 const transporter = nodemailer.createTransport(
   sendgridTransport({
     auth: {
       api_key:
-      "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",
-    }
+        "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",
+    },
   })
 );
 //checking email is present or not
@@ -28,7 +28,7 @@ exports.postCheckEmail = async (req, res, next) => {
     const email = obj.email;
     const newUser = await SignUp.isThisEmail(email);
     if (!newUser)
-    return res.status(400).json({
+      return res.status(400).json({
         success: false,
         type: "email",
         msg: "This email is already taken !",
@@ -112,21 +112,19 @@ try {
     .save()
     .then((result) => {
       console.log("SignedUp !");
-        transporter.sendMail({
-          to: email,
-          from: 'sahilmohammad532@gmail.com',
-          subject: 'Signed Up',
-          html: `
+      transporter.sendMail({
+        to: email,
+        from: "sahilmohammad532@gmail.com",
+        subject: "Signed Up",
+        html: `
             <p>Welcome ${name}</p>
             <p>You are signed up Successfully !</p>
-          `
-        });
-        return res
-        .status(200)
-        .json({
-          success: true,
-          msg: "User Registered Successfully !",
-        })
+          `,
+      });
+      return res.status(200).json({
+        success: true,
+        msg: "User Registered Successfully !",
+      });
     })
     .catch((err) => {
       console.log(err);
@@ -231,20 +229,19 @@ exports.getUser = async (req, res, next) => {
     console.log(obj);
     const id = req.body.id;
     const findUser = await SignUp.findById(id);
-    const arr=[];
+    const arr = [];
     const counts = {};
     if (findUser) {
       // const DATE = new Date(findUser.attendedEvents[0].date).getDate();
       // console.log(DATE);
-      findUser.attendedEvents.map(ele =>{
-        arr.push(ele.date.split('T')[0]);
-      })
+      findUser.attendedEvents.map((ele) => {
+        arr.push(ele.date.split("T")[0]);
+      });
       arr.forEach((x) => {
         counts[x] = (counts[x] || 0) + 1;
       });
-      return res.status(200).send({
-        user: findUser,
-        count: counts});
+      let localObj = findUser._doc;
+      return res.status(200).send({ ...localObj, counts });
     } else {
       return res.status(404).json({
         type: "Authentication",
